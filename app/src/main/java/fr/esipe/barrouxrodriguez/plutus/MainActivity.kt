@@ -21,6 +21,8 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
+
+                    // ooooooo saaa marcheee leo il est trop bg sa mere
                 ) {
                     Greeting("Android")
                 }
