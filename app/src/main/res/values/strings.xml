@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Plutus</string>
+
+    <!--  Name Tags  -->
+    <string name="food_nameTag">Food</string>
+    <string name="car_nameTag">Car</string>
+    <string name="rent_nameTag">Rent</string>
+    <string name="travel_nameTag">Travel</string>
+
 </resources>
