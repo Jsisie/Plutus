@@ -11,6 +11,7 @@ class Transaction(
     val title: Text,
     val date: LocalDateTime,
     val amount: Int,
-    val listNameTag: List<NameTag>
+    val listNameTag: List<NameTag>,
 ) {
+
 }

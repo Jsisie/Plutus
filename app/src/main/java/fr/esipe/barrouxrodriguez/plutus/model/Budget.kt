@@ -12,4 +12,5 @@ data class Budget(
     val amount: Int,
     @Embedded val nameTag: NameTag,
     val dateStart: LocalDate,
-    val dateEnd: LocalDate)
+    val dateEnd: LocalDate,
+)

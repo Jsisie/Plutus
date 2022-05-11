@@ -10,5 +10,5 @@ data class NoteBook(
     val title: String,
     val listNameTag: List<NameTag>,
     val listBudget: List<Budget>,
-    val dateCreation: LocalDateTime? = LocalDateTime.now()
+    val dateCreation: LocalDateTime? = LocalDateTime.now(),
 )

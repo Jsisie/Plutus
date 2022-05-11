@@ -1,10 +1,8 @@
 package fr.esipe.barrouxrodriguez.plutus
 
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -12,7 +10,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import fr.esipe.barrouxrodriguez.plutus.model.NoteBook
 import fr.esipe.barrouxrodriguez.plutus.ui.theme.PlutusTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,8 +22,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-
-                    Greeting("lol")
+                    Greeting("Plutus")
                 }
             }
         }
@@ -35,7 +31,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String) {
-    Text(text = "$name")
+    Text(text = name)
 }
 
 @Preview(showBackground = true)
