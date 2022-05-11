@@ -16,7 +16,6 @@ import fr.esipe.barrouxrodriguez.plutus.model.NoteBook
 import fr.esipe.barrouxrodriguez.plutus.ui.theme.PlutusTheme
 
 class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -27,7 +26,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
 
-                    Greeting(NoteBook("Notebook c'est fou !: ").toString())
+                    Greeting("lol")
                 }
             }
         }
