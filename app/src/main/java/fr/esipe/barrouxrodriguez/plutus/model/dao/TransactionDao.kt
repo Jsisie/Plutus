@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
 import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
+
 @Dao
 interface TransactionDao {
 
@@ -17,7 +19,7 @@ interface TransactionDao {
     @Query("SELECT *  FROM `Transaction` WHERE idTransaction = (:transaction)")
     fun loadByIdWithNameTags(transaction: Int): TransactionWithNameTags?
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     suspend fun insertAll(vararg transaction: Transaction)
 
     @Delete

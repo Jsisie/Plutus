@@ -2,7 +2,6 @@ package fr.esipe.barrouxrodriguez.plutus
 
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -17,12 +16,16 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import fr.esipe.barrouxrodriguez.plutus.model.NameTagViewModel
+import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.TransactionViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
+import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
+import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
+import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NameTagViewModel
 import fr.esipe.barrouxrodriguez.plutus.ui.theme.PlutusTheme
 
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -32,33 +35,59 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    println("ALED?,,,,???")
                     val context = LocalContext.current
-                    val NTviewModel: NameTagViewModel = viewModel(
+
+                    NTviewModel = viewModel(
                         factory =
                         NameTagViewModel.NameTagModelFactory(
                             context.applicationContext as Application
                         )
                     )
 
-                    val items: List<NameTag> =
-                        NTviewModel.readAllData.observeAsState(emptyList()).value
+                    println("ALED?")
+                    transactionViewModel = viewModel(
+                        factory =
+                        TransactionViewModel.TransactionViewModelFactory(
+                            context.applicationContext as Application
+                        )
+                    )
+                    println("ALED?22")
+                    val items: List<TransactionWithNameTags> =
+                        transactionViewModel.readAllData.observeAsState(
+                            emptyList()
+                        ).value
 
-                    Log.i("test", "aled ?")
-                    Log.i("test", items.toString())
-                    Greeting(items, NTviewModel = NTviewModel)
+                    transactionViewModel.insertAll(
+                        Transaction(
+                            1,
+                            "Remboursement Eric",
+                            amount_transaction = 500,
+                            idNotebook = null
+                        )
+                    )
+                    println("ALED?SDQSDQD22")
+
+                    Greeting(items)
                 }
             }
         }
     }
 }
 
+lateinit var NTviewModel: NameTagViewModel
+lateinit var transactionViewModel: TransactionViewModel
+
 @Composable
-fun Greeting(items: List<NameTag>, NTviewModel: NameTagViewModel) {
+fun Greeting(items: List<TransactionWithNameTags>) {
     Column {
         Button(modifier = Modifier.fillMaxWidth(),
+
             onClick = {
-                NTviewModel.insertAll(NameTag("Bonjour", null))
-            }) {
+                NTviewModel.insertAll(NameTag("sdfgsdfgsdfg", 1))
+            })
+
+        {
             Text(text = "waoua")
         }
 

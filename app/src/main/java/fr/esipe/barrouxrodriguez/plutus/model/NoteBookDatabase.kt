@@ -1,11 +1,10 @@
-package fr.esipe.barrouxrodriguez.plutus.model.repository
+package fr.esipe.barrouxrodriguez.plutus.model
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import fr.esipe.barrouxrodriguez.plutus.model.Converters
 import fr.esipe.barrouxrodriguez.plutus.model.dao.BudgetDao
 import fr.esipe.barrouxrodriguez.plutus.model.dao.NameTagDao
 import fr.esipe.barrouxrodriguez.plutus.model.dao.NoteBookDao

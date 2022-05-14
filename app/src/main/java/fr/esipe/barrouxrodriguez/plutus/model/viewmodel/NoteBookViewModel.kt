@@ -1,7 +1,8 @@
-package fr.esipe.barrouxrodriguez.plutus.model.repository
+package fr.esipe.barrouxrodriguez.plutus.model.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
+import fr.esipe.barrouxrodriguez.plutus.model.NoteBookDatabase
 import fr.esipe.barrouxrodriguez.plutus.model.dao.NoteBookDao
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
 import kotlinx.coroutines.Dispatchers
