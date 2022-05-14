@@ -6,9 +6,19 @@
     <string name="car_nameTag">Voiture</string>
     <string name="rent_nameTag">Loyer</string>
     <string name="travel_nameTag">Loyer</string>
-    <string name="add_notebook">Créer un nouveau carnet de compte</string>
     <string name="placeholder_ntb">nouveau carnet de compte</string>
     <string name="add">Ajouter</string>
     <string name="cancel">Annuler</string>
+    <string name="create_notebook">Créer un carnet de compte</string>
+    <string name="title">Titre</string>
+    <string name="creation_date">Date de création</string>
+    <string name="edit_notebook">Modifier le carnet de compte</string>
+    <string name="delete_notebook">Supprimer le carnet de compte</string>
+    <string name="add_notebook">Ajouter un carnet de compte</string>
+    <string name="confirmation_delete_notebook">"Êtes-vous sûr de vouloir supprimer ce carnet de compte ? "</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="edit_notebook_name">Modifier le nom du carnet de compte</string>
+    <string name="modify_notebook">Modifier le carnet de compte</string>
 
 </resources>

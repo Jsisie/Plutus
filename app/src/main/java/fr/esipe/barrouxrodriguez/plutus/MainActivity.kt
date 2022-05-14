@@ -66,7 +66,6 @@ class MainActivity : ComponentActivity() {
                             context.applicationContext as Application
                         )
                     )
-
                     NoteBookDisplay()
                 }
             }
@@ -101,7 +100,7 @@ fun NoteBookDisplay() {
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Plutus",
+                        text = stringResource(id = R.string.app_name),
                         textAlign = TextAlign.Center,
                         fontSize = 24.sp
                     )
@@ -113,7 +112,7 @@ fun NoteBookDisplay() {
             FloatingActionButton(onClick = {
                 openAddDialog.value = true
             }) {
-                Icon(Icons.Filled.Add, "Create Notebook")
+                Icon(Icons.Filled.Add, stringResource(id = R.string.create_notebook))
             }
         },
         isFloatingActionButtonDocked = true,
@@ -138,9 +137,11 @@ fun NoteBookDisplay() {
                             .padding(5.dp)
                     ) {
                         Column {
-                            Text(text = "Titre: ${notebooks[i].titleNoteBook}")
+                            Text(text = stringResource(id = R.string.title) + ": ${
+                                notebooks[i].titleNoteBook
+                            }")
                             Text(
-                                text = "Date de création: ${
+                                text = stringResource(id = R.string.creation_date) + ": ${
                                     notebooks[i].dateCreation?.let { it1 ->
                                         Converters.printDate(
                                             it1, "yyyy-MM-dd"
@@ -162,7 +163,7 @@ fun NoteBookDisplay() {
                                 bottom = 5.dp
                             )
                         ) {
-                            Icon(Icons.Filled.Create, "Edit noteBook")
+                            Icon(Icons.Filled.Create, stringResource(id = R.string.edit_notebook))
                         }
                         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                         Button(
@@ -177,7 +178,7 @@ fun NoteBookDisplay() {
                                 bottom = 5.dp
                             )
                         ) {
-                            Icon(Icons.Filled.Delete, "Delete noteBook")
+                            Icon(Icons.Filled.Delete, stringResource(id = R.string.delete_notebook))
                         }
                     }
                 }
@@ -233,27 +234,24 @@ fun DeleteNoteBookDialog(openDialog: MutableState<Boolean>, notebook: NoteBook) 
                 openDialog.value = false
             },
             title = {
-                /* TODO nom en dur*/
-                Text(text = "Delete Notebook")
+                Text(text = stringResource(id = R.string.delete_notebook))
             },
             text = {
-                /* TODO nom en dur*/
-                Text("Are you sure to delete this notebook ?")
+                Text(stringResource(id = R.string.confirmation_delete_notebook))
             },
             confirmButton = {
                 Button(onClick = {
                     notebookViewModel.delete(notebook)
                     openDialog.value = false
                 }) {
-                    /* TODO nom en dur*/
-                    Text(text = "yes")
+                    Text(text = stringResource(id = R.string.yes))
                 }
             },
             dismissButton = {
                 Button(onClick = {
                     openDialog.value = false
                 }) {
-                    Text(text = "no")
+                    Text(text = stringResource(id = R.string.no))
                 }
             }
         )
@@ -269,8 +267,7 @@ fun EditNoteBookDialog(openDialog: MutableState<Boolean>, notebook: NoteBook) {
                 openDialog.value = false
             },
             title = {
-                /* TODO nom en dur*/
-                Text(text = "Edit notebook name")
+                Text(text = stringResource(id = R.string.edit_notebook_name))
             },
             text = {
                 TextField(
@@ -289,8 +286,7 @@ fun EditNoteBookDialog(openDialog: MutableState<Boolean>, notebook: NoteBook) {
                     )
                     openDialog.value = false
                 }) {
-                    /* TODO nom en dur*/
-                    Text(text = "Modify")
+                    Text(text = stringResource(id = R.string.modify_notebook))
                 }
             },
             dismissButton = {
