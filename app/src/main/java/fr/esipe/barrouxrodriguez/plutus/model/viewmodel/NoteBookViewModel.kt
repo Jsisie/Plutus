@@ -8,12 +8,12 @@ import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class NoteBookViewModel(application: Application) : AndroidViewModel(application)  {
+class NoteBookViewModel(application: Application) : AndroidViewModel(application) {
     private val readAllData: LiveData<List<NoteBook>>
     private var noteBookDao: NoteBookDao = NoteBookDatabase.getInstance(application).NoteBookDao()
 
     init {
-        readAllData =  noteBookDao.getAll()
+        readAllData = noteBookDao.getAll()
     }
 
     fun insertAll(vararg noteBook: NoteBook) {
@@ -29,7 +29,7 @@ class NoteBookViewModel(application: Application) : AndroidViewModel(application
     }
 
     class NoteBookModelFactory(
-        private val application: Application
+        private val application: Application,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")

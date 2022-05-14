@@ -8,5 +8,5 @@ data class TransactionWithNameTags(
     @Relation(
         parentColumn = "idTransaction",
         entityColumn = "idTransaction"
-    ) val nameTags: List<NameTag>
+    ) val nameTags: List<NameTag>,
 )

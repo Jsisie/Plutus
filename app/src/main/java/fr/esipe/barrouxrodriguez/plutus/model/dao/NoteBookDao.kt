@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBookWithTransactionsAndBudget
+
 @Dao
 interface NoteBookDao {
     @Query("SELECT * FROM NoteBook")

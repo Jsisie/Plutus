@@ -13,5 +13,5 @@ data class NoteBookWithTransactionsAndBudget(
     @Relation(
         parentColumn = "idNotebook",
         entityColumn = "idNotebook"
-    ) val listBudget: List<Budget>
+    ) val listBudget: List<Budget>,
 )

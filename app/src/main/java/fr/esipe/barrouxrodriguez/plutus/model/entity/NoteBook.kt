@@ -2,7 +2,6 @@ package fr.esipe.barrouxrodriguez.plutus.model.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalDateTime
 import java.util.*
 
 @Entity

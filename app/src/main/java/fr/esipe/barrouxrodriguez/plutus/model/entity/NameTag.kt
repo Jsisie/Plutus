@@ -6,5 +6,5 @@ import androidx.room.PrimaryKey
 @Entity
 data class NameTag(
     @PrimaryKey val titleNameTag: String,
-    val idTransaction: Int?
+    val idTransaction: Int?,
 )

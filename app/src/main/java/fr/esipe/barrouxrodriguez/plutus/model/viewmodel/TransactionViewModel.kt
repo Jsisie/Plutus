@@ -31,7 +31,7 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     class TransactionViewModelFactory(
-        private val application: Application
+        private val application: Application,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")

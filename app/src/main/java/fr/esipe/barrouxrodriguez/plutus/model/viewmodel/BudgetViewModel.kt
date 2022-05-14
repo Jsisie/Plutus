@@ -8,12 +8,12 @@ import fr.esipe.barrouxrodriguez.plutus.model.entity.Budget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class BudgetViewModel(application: Application) : AndroidViewModel(application)  {
+class BudgetViewModel(application: Application) : AndroidViewModel(application) {
     private val readAllData: LiveData<List<Budget>>
     private var budgetDao: BudgetDao = NoteBookDatabase.getInstance(application).BudgetDao()
 
     init {
-        readAllData =  budgetDao.getAll()
+        readAllData = budgetDao.getAll()
     }
 
     fun insertAll(vararg budget: Budget) {
@@ -29,7 +29,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     class BudgetModelFactory(
-        private val application: Application
+        private val application: Application,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")

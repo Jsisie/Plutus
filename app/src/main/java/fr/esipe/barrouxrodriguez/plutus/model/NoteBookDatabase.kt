@@ -41,7 +41,7 @@ abstract class NoteBookDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context): NoteBookDatabase {
             return Room.databaseBuilder(
                 context.applicationContext,
-                NoteBookDatabase::class.java, "notebook-db"
+                NoteBookDatabase::class.java, "notebook-db2"
             ).build()
         }
     }

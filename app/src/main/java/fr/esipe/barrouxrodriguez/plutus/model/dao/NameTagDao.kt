@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
+
 @Dao
 interface NameTagDao {
     @Query("SELECT * FROM NameTag")
