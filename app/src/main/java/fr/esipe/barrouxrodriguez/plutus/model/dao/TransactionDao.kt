@@ -16,6 +16,7 @@ interface TransactionDao {
     @Query("SELECT * FROM `Transaction`")
     fun getAllWithNameTags(): LiveData<List<TransactionWithNameTags>>
 
+    @androidx.room.Transaction
     @Query("SELECT *  FROM `Transaction` WHERE idTransaction = (:transaction)")
     fun loadByIdWithNameTags(transaction: Int): TransactionWithNameTags?
 

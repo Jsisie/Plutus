@@ -7,7 +7,7 @@ import java.util.*
 
 @Entity
 data class Budget(
-    @PrimaryKey(autoGenerate = true) val idBudget: Int,
+    @PrimaryKey(autoGenerate = true) val idBudget: Int = 0,
     val titleBudget: String,
     val amountBudget: Int,
     @Embedded val nameTag: NameTag,

@@ -6,7 +6,7 @@ import java.util.*
 
 @Entity
 data class Transaction(
-    @PrimaryKey(autoGenerate = true) val idTransaction: Int,
+    @PrimaryKey(autoGenerate = true) val idTransaction: Int = 0,
     val title_transaction: String,
     val date_transaction: Date = Calendar.getInstance().time,
     val amount_transaction: Int,

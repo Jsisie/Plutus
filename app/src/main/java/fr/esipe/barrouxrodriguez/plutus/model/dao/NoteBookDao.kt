@@ -17,6 +17,9 @@ interface NoteBookDao {
     @Insert
     suspend fun insertAll(vararg noteBook: NoteBook)
 
+    @Update
+    suspend fun update(noteBook: NoteBook)
+
     @Delete
     suspend fun delete(noteBook: NoteBook)
 }

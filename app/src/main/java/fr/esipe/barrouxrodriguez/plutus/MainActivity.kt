@@ -4,15 +4,30 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import fr.esipe.barrouxrodriguez.plutus.model.Converters
+import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NameTagViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NoteBookViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.TransactionViewModel
@@ -52,6 +67,7 @@ class MainActivity : ComponentActivity() {
                         )
                     )
 
+                    NoteBookDisplay()
                 }
             }
         }
@@ -64,11 +80,226 @@ lateinit var notebookViewModel: NoteBookViewModel
 
 
 @Composable
-fun NoteBookPage() {
-    // List of dabase notebooks
+fun NoteBookDisplay() {
+    // List of database notebooks
     val notebooks = notebookViewModel.readAllData.observeAsState(emptyList()).value
 
-    Scaffold() {
-        
+    val openAddDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val openEditDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val openDeleteDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
+
+    val selectedNoteBook: MutableState<NoteBook> = remember {
+        mutableStateOf(NoteBook("placeholder"))
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(Modifier.fillMaxWidth()) {
+                Column(
+                    Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Plutus",
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp
+                    )
+                }
+            }
+        },
+
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                openAddDialog.value = true
+            }) {
+                Icon(Icons.Filled.Add, "Create Notebook")
+            }
+        },
+        isFloatingActionButtonDocked = true,
+        bottomBar = {
+            BottomAppBar(
+                // Defaults to null, that is, No cutout
+                cutoutShape = MaterialTheme.shapes.small.copy(
+                    CornerSize(percent = 50)
+                )
+            ) {
+
+            }
+        }
+    ) {
+
+        LazyColumn {
+            items(notebooks.size) { i ->
+                Card(elevation = 5.dp, modifier = Modifier.padding(15.dp)) {
+                    Row(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(5.dp)
+                    ) {
+                        Column {
+                            Text(text = "Titre: ${notebooks[i].titleNoteBook}")
+                            Text(
+                                text = "Date de création: ${
+                                    notebooks[i].dateCreation?.let { it1 ->
+                                        Converters.printDate(
+                                            it1, "yyyy-MM-dd"
+                                        )
+                                    }
+                                }"
+                            )
+                        }
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        Button(
+                            onClick = {
+                                openEditDialog.value = true
+                                selectedNoteBook.value = notebooks[i]
+                            },
+                            contentPadding = PaddingValues(
+                                start = 2.dp,
+                                top = 5.dp,
+                                end = 2.dp,
+                                bottom = 5.dp
+                            )
+                        ) {
+                            Icon(Icons.Filled.Create, "Edit noteBook")
+                        }
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        Button(
+                            onClick = {
+                                openDeleteDialog.value = true
+                                selectedNoteBook.value = notebooks[i]
+                            },
+                            contentPadding = PaddingValues(
+                                start = 2.dp,
+                                top = 5.dp,
+                                end = 2.dp,
+                                bottom = 5.dp
+                            )
+                        ) {
+                            Icon(Icons.Filled.Delete, "Delete noteBook")
+                        }
+                    }
+                }
+            }
+        }
+
+        AddNoteBookDialog(openAddDialog)
+        EditNoteBookDialog(openEditDialog, selectedNoteBook.value)
+        DeleteNoteBookDialog(openDeleteDialog, selectedNoteBook.value)
+    }
+}
+
+@Composable
+fun AddNoteBookDialog(openAddDialog: MutableState<Boolean>) {
+    if (openAddDialog.value) {
+        val notebookName = remember { mutableStateOf(TextFieldValue("")) }
+        AlertDialog(
+            onDismissRequest = {
+                openAddDialog.value = false
+            },
+            title = {
+                Text(text = stringResource(id = R.string.add_notebook))
+            },
+            text = {
+                TextField(
+                    value = notebookName.value,
+                    onValueChange = { newText -> notebookName.value = newText })
+            },
+            confirmButton = {
+                Button(onClick = {
+                    notebookViewModel.insertAll(NoteBook(notebookName.value.text))
+                    openAddDialog.value = false
+                }) {
+                    Text(text = stringResource(id = R.string.add))
+                }
+            },
+            dismissButton = {
+                Button(onClick = {
+                    openAddDialog.value = false
+                }) {
+                    Text(text = stringResource(id = R.string.cancel))
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun DeleteNoteBookDialog(openDialog: MutableState<Boolean>, notebook: NoteBook) {
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            title = {
+                /* TODO nom en dur*/
+                Text(text = "Delete Notebook")
+            },
+            text = {
+                /* TODO nom en dur*/
+                Text("Are you sure to delete this notebook ?")
+            },
+            confirmButton = {
+                Button(onClick = {
+                    notebookViewModel.delete(notebook)
+                    openDialog.value = false
+                }) {
+                    /* TODO nom en dur*/
+                    Text(text = "yes")
+                }
+            },
+            dismissButton = {
+                Button(onClick = {
+                    openDialog.value = false
+                }) {
+                    Text(text = "no")
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun EditNoteBookDialog(openDialog: MutableState<Boolean>, notebook: NoteBook) {
+    if (openDialog.value) {
+        val notebookName = remember { mutableStateOf(TextFieldValue(notebook.titleNoteBook)) }
+        AlertDialog(
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            title = {
+                /* TODO nom en dur*/
+                Text(text = "Edit notebook name")
+            },
+            text = {
+                TextField(
+                    value = notebookName.value,
+                    onValueChange = { newText -> notebookName.value = newText })
+            },
+            confirmButton = {
+                Button(onClick = {
+
+                    notebookViewModel.update(
+                        NoteBook(
+                            notebookName.value.text,
+                            dateCreation = notebook.dateCreation,
+                            idNotebook = notebook.idNotebook
+                        )
+                    )
+                    openDialog.value = false
+                }) {
+                    /* TODO nom en dur*/
+                    Text(text = "Modify")
+                }
+            },
+            dismissButton = {
+                Button(onClick = {
+                    openDialog.value = false
+                }) {
+                    Text(text = stringResource(id = R.string.cancel))
+                }
+            }
+        )
     }
 }

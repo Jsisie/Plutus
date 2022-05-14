@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Plutus</string>
 
     <!--  Etiquettes  -->
     <string name="food_nameTag">Nourriture</string>
     <string name="car_nameTag">Voiture</string>
     <string name="rent_nameTag">Loyer</string>
     <string name="travel_nameTag">Loyer</string>
+    <string name="add_notebook">Créer un nouveau carnet de compte</string>
+    <string name="placeholder_ntb">nouveau carnet de compte</string>
+    <string name="add">Ajouter</string>
+    <string name="cancel">Annuler</string>
 
 </resources>

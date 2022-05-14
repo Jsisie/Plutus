@@ -22,6 +22,12 @@ class NoteBookViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun update(noteBook: NoteBook) {
+        viewModelScope.launch(Dispatchers.IO) {
+            noteBookDao.update(noteBook)
+        }
+    }
+
     fun delete(noteBook: NoteBook) {
         viewModelScope.launch(Dispatchers.IO) {
             noteBookDao.delete(noteBook)

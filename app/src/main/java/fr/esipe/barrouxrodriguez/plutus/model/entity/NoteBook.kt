@@ -6,7 +6,7 @@ import java.util.*
 
 @Entity
 data class NoteBook(
-    @PrimaryKey(autoGenerate = true) val idNotebook: Int,
     val titleNoteBook: String,
     val dateCreation: Date? = Calendar.getInstance().time,
+    @PrimaryKey(autoGenerate = true) val idNotebook: Int = 0
 )
