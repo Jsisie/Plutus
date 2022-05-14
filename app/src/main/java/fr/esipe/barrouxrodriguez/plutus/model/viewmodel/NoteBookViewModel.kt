@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class NoteBookViewModel(application: Application) : AndroidViewModel(application) {
-    private val readAllData: LiveData<List<NoteBook>>
+    val readAllData: LiveData<List<NoteBook>>
     private var noteBookDao: NoteBookDao = NoteBookDatabase.getInstance(application).NoteBookDao()
 
     init {

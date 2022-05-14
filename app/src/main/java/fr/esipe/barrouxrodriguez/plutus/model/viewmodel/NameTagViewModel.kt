@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class NameTagViewModel(application: Application) : AndroidViewModel(application) {
-    private val readAllData: LiveData<List<NameTag>>
+    val readAllData: LiveData<List<NameTag>>
     private var nameTagDao: NameTagDao = NoteBookDatabase.getInstance(application).NameTagDao()
 
     init {
