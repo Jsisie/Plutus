@@ -10,5 +10,5 @@ data class Transaction(
     val title_transaction: String,
     val date_transaction: Date = Calendar.getInstance().time,
     val amount_transaction: Int,
-    val idNotebook: Int?,
+    val idNotebook: Int
 )
