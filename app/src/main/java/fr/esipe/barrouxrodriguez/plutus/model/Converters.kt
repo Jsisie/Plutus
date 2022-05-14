@@ -9,5 +9,4 @@ class Converters {
 
     @TypeConverter
     fun longToDate(value: Long): Date = Date(value)
-
 }

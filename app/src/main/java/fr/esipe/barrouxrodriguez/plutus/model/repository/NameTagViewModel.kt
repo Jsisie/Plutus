@@ -1,31 +1,29 @@
-package fr.esipe.barrouxrodriguez.plutus.model
+package fr.esipe.barrouxrodriguez.plutus.model.repository
 
 import android.app.Application
 import androidx.lifecycle.*
+import fr.esipe.barrouxrodriguez.plutus.model.dao.NameTagDao
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
-import fr.esipe.barrouxrodriguez.plutus.model.repository.NameTagRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class NameTagViewModel(application: Application) : AndroidViewModel(application) {
-    val readAllData: LiveData<List<NameTag>>
-    private val repository: NameTagRepository
+    private val readAllData: LiveData<List<NameTag>>
+    private var nameTagDao: NameTagDao = NoteBookDatabase.getInstance(application).NameTagDao()
 
     init {
-        val nameTagDao = NoteBookDatabase.getInstance(application).NameTagDao()
-        repository = NameTagRepository((nameTagDao))
-        readAllData = repository.readAllData
+        readAllData = nameTagDao.getAll()
     }
 
     fun insertAll(vararg nameTag: NameTag) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.insertAll(*nameTag)
+            nameTagDao.insertAll(*nameTag)
         }
     }
 
     fun delete(nameTag: NameTag) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.delete(nameTag)
+            nameTagDao.delete(nameTag)
         }
     }
 

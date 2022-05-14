@@ -1,10 +1,11 @@
-package fr.esipe.barrouxrodriguez.plutus.model
+package fr.esipe.barrouxrodriguez.plutus.model.repository
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import fr.esipe.barrouxrodriguez.plutus.model.Converters
 import fr.esipe.barrouxrodriguez.plutus.model.dao.BudgetDao
 import fr.esipe.barrouxrodriguez.plutus.model.dao.NameTagDao
 import fr.esipe.barrouxrodriguez.plutus.model.dao.NoteBookDao
@@ -18,9 +19,10 @@ import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
     version = 1,
     entities = [NoteBook::class, NameTag::class, Budget::class, Transaction::class]
 )
+
 @TypeConverters(Converters::class)
 abstract class NoteBookDatabase : RoomDatabase() {
-    abstract fun budgetDao(): BudgetDao
+    abstract fun BudgetDao(): BudgetDao
     abstract fun NameTagDao(): NameTagDao
     abstract fun NoteBookDao(): NoteBookDao
     abstract fun TransactionDao(): TransactionDao
@@ -41,8 +43,7 @@ abstract class NoteBookDatabase : RoomDatabase() {
             return Room.databaseBuilder(
                 context.applicationContext,
                 NoteBookDatabase::class.java, "notebook-db"
-            )
-                .build()
+            ).build()
         }
     }
 }
