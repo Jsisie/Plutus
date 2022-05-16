@@ -13,10 +13,10 @@ import androidx.navigation.NavController
 class NameTagScreen {
     @SuppressLint("NotConstructor")
     @Composable
-    fun NameTagScreen(navController: NavController) {
+    fun NameTagScreen(navController: NavController, idNoteBook: Int?) {
         Button(modifier = Modifier
             .padding(10.dp),
-            onClick = { navController.navigate("transaction_screen") }) {
+            onClick = { navController.navigate("transaction_screen/$idNoteBook") }) {
             Text(text = "Return")
         }
 

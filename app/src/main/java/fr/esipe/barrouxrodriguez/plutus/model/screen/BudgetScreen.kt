@@ -13,10 +13,10 @@ import androidx.navigation.NavController
 class BudgetScreen {
     @SuppressLint("NotConstructor")
     @Composable
-    fun BudgetScreen(navController: NavController) {
+    fun BudgetScreen(navController: NavController, idNoteBook: Int?) {
         Button(modifier = Modifier
             .padding(10.dp),
-            onClick = { navController.navigate("notebook_screen") }) {
+            onClick = { navController.navigate("notebook_screen/$idNoteBook") }) {
             Text(text = "Return")
         }
 
@@ -31,7 +31,7 @@ class BudgetScreen {
 
             Spacer(modifier = Modifier.padding(top = 16.dp))
 
-            Button(onClick = { navController.navigate("transaction_screen") }) {
+            Button(onClick = { navController.navigate("transaction_screen/$idNoteBook") }) {
                 Text(text = "Transaction")
             }
         }

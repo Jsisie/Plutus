@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class TransactionViewModel(application: Application) : AndroidViewModel(application) {
-    val readAllData: LiveData<List<TransactionWithNameTags>>
+    private val readAllData: LiveData<List<TransactionWithNameTags>>
     private val transactionDao: TransactionDao =
         NoteBookDatabase.getInstance(application).TransactionDao()
 

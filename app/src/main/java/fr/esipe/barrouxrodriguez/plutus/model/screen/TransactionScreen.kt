@@ -13,10 +13,10 @@ import androidx.navigation.NavController
 class TransactionScreen {
     @SuppressLint("NotConstructor")
     @Composable
-    fun TransactionScreen(navController: NavController) {
+    fun TransactionScreen(navController: NavController, idNoteBook: Int?) {
         Button(modifier = Modifier
             .padding(10.dp),
-            onClick = { navController.navigate("notebook_screen") }) {
+            onClick = { navController.navigate("notebook_screen/$idNoteBook") }) {
             Text(text = "Return")
         }
 
@@ -31,10 +31,10 @@ class TransactionScreen {
 
             Spacer(modifier = Modifier.padding(top = 16.dp))
 
-            Button(onClick = { navController.navigate("nameTag_screen") }) {
+            Button(onClick = { navController.navigate("nameTag_screen/$idNoteBook") }) {
                 Text(text = "NameTag")
             }
-            Button(onClick = { navController.navigate("budget_screen") }) {
+            Button(onClick = { navController.navigate("budget_screen/$idNoteBook") }) {
                 Text(text = "Budget")
             }
         }

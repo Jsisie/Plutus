@@ -75,9 +75,29 @@ fun NavigationBasicsApp() {
 
     NavHost(navController = navController, startDestination = "homepage_screen") {
         composable("homepage_screen") { homePageScreen.HomePageScreen(navController) }
-        composable("notebook_screen") { noteBookScreen.NoteBookScreen(navController) }
-        composable("transaction_screen") { transactionScreen.TransactionScreen(navController) }
-        composable("budget_screen") { budgetScreen.BudgetScreen(navController) }
-        composable("nameTag_screen") { nameTagScreen.NameTagScreen(navController) }
+        composable("notebook_screen/{idNoteBook}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("idNoteBook")
+            // TODO - fonctionne mais... DEGUEULASSE
+            if (id != null)
+                noteBookScreen.NoteBookScreen(navController, id.toInt())
+        }
+        composable("transaction_screen/{idNoteBook}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("idNoteBook")
+            // TODO - fonctionne mais... DEGUEULASSE
+            if (id != null)
+                transactionScreen.TransactionScreen(navController, id.toInt())
+        }
+        composable("budget_screen/{idNoteBook}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("idNoteBook")
+            // TODO - fonctionne mais... DEGUEULASSE
+            if (id != null)
+                budgetScreen.BudgetScreen(navController, id.toInt())
+        }
+        composable("nameTag_screen/{idNoteBook}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("idNoteBook")
+            // TODO - fonctionne mais... DEGUEULASSE
+            if (id != null)
+                nameTagScreen.NameTagScreen(navController, id.toInt())
+        }
     }
 }

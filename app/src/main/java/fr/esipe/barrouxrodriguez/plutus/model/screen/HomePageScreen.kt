@@ -80,62 +80,68 @@ class HomePageScreen {
         ) {
             LazyColumn {
                 items(notebooks.size) { i ->
+                    // TODO - Get name of the NoteBook clicked on
+                    val idNoteBook = notebooks[i].idNotebook
+
                     Card(elevation = 5.dp, modifier = Modifier.padding(15.dp),
                         onClick = {
-                            navController.navigate("notebook_screen")
-                        }) {
-                        Row(
-                            Modifier
-                                .fillMaxSize()
-                                .padding(5.dp),
+                            navController.navigate("notebook_screen/$idNoteBook")
+                        },
+                        content = {
+                            Row(
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(5.dp),
 
-                            ) {
-                            Column {
-                                Text(text = stringResource(id = R.string.title) + ": ${
-                                    notebooks[i].titleNoteBook
-                                }")
-                                Text(
-                                    text = stringResource(id = R.string.creation_date) + ": ${
-                                        notebooks[i].dateCreation?.let { it1 ->
-                                            Converters.printDate(
-                                                it1, "yyyy-MM-dd"
-                                            )
-                                        }
-                                    }"
-                                )
+                                ) {
+                                Column {
+                                    Text(text = stringResource(id = R.string.title) + ": ${
+                                        notebooks[i].titleNoteBook
+                                    }")
+                                    Text(
+                                        text = stringResource(id = R.string.creation_date) + ": ${
+                                            notebooks[i].dateCreation?.let { it1 ->
+                                                Converters.printDate(
+                                                    it1, "yyyy-MM-dd"
+                                                )
+                                            }
+                                        }"
+                                    )
+                                }
+                                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                                Button(
+                                    onClick = {
+                                        openEditDialog.value = true
+                                        selectedNoteBook.value = notebooks[i]
+                                    },
+                                    contentPadding = PaddingValues(
+                                        start = 2.dp,
+                                        top = 5.dp,
+                                        end = 2.dp,
+                                        bottom = 5.dp
+                                    )
+                                ) {
+                                    Icon(Icons.Filled.Create,
+                                        stringResource(id = R.string.edit_notebook))
+                                }
+                                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                                Button(
+                                    onClick = {
+                                        openDeleteDialog.value = true
+                                        selectedNoteBook.value = notebooks[i]
+                                    },
+                                    contentPadding = PaddingValues(
+                                        start = 2.dp,
+                                        top = 5.dp,
+                                        end = 2.dp,
+                                        bottom = 5.dp
+                                    )
+                                ) {
+                                    Icon(Icons.Filled.Delete,
+                                        stringResource(id = R.string.delete_notebook))
+                                }
                             }
-                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                            Button(
-                                onClick = {
-                                    openEditDialog.value = true
-                                    selectedNoteBook.value = notebooks[i]
-                                },
-                                contentPadding = PaddingValues(
-                                    start = 2.dp,
-                                    top = 5.dp,
-                                    end = 2.dp,
-                                    bottom = 5.dp
-                                )
-                            ) {
-                                Icon(Icons.Filled.Create, stringResource(id = R.string.edit_notebook))
-                            }
-                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                            Button(
-                                onClick = {
-                                    openDeleteDialog.value = true
-                                    selectedNoteBook.value = notebooks[i]
-                                },
-                                contentPadding = PaddingValues(
-                                    start = 2.dp,
-                                    top = 5.dp,
-                                    end = 2.dp,
-                                    bottom = 5.dp
-                                )
-                            ) {
-                                Icon(Icons.Filled.Delete, stringResource(id = R.string.delete_notebook))
-                            }
-                        }
-                    }
+                        })
                 }
             }
             AddNoteBookDialog(openAddDialog)
