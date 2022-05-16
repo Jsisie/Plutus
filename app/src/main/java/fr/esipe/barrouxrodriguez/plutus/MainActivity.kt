@@ -74,7 +74,7 @@ fun NavigationBasicsApp() {
     val nameTagScreen = NameTagScreen()
 
     NavHost(navController = navController, startDestination = "homepage_screen") {
-        composable("homepage_screen") { homePageScreen.NoteBookDisplay(navController) }
+        composable("homepage_screen") { homePageScreen.HomePageScreen(navController) }
         composable("notebook_screen") { noteBookScreen.NoteBookScreen(navController) }
         composable("transaction_screen") { transactionScreen.TransactionScreen(navController) }
         composable("budget_screen") { budgetScreen.BudgetScreen(navController) }

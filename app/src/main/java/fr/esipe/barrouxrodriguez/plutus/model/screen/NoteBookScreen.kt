@@ -1,7 +1,6 @@
 package fr.esipe.barrouxrodriguez.plutus.model.screen
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -31,7 +30,6 @@ class NoteBookScreen {
             Text("Welcome to the NoteBook page !")
 
             Spacer(modifier = Modifier.padding(top = 16.dp))
-
 
             Button(onClick = { navController.navigate("transaction_screen") }) {
                 Text(text = "Transaction")

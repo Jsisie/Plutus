@@ -1,5 +1,6 @@
 package fr.esipe.barrouxrodriguez.plutus.model.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
@@ -27,10 +28,10 @@ import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
 import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
 
 class HomePageScreen {
-
+    @SuppressLint("NotConstructor")
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
-    fun NoteBookDisplay(navController: NavController) {
+    fun HomePageScreen(navController: NavController) {
         // List of database notebooks
         val notebooks = notebookViewModel.readAllData.observeAsState(emptyList()).value
 
@@ -147,7 +148,7 @@ class HomePageScreen {
     fun AddNoteBookDialog(openAddDialog: MutableState<Boolean>) {
         if (openAddDialog.value) {
             val notebookName =
-                remember { mutableStateOf(TextFieldValue("")) } // TODO - initialize to null ?
+                remember { mutableStateOf(TextFieldValue("")) }
             AlertDialog(
                 onDismissRequest = {
                     openAddDialog.value = false
