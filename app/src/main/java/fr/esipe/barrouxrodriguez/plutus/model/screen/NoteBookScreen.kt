@@ -35,8 +35,9 @@ class NoteBookScreen {
 
             // TODO - Get NoteBook by id to print name (beurk)
             val nameNoteBook = idNoteBook?.let { notebookViewModel.readAllData.value?.get(it-1) }
-            if (nameNoteBook != null)
-                Text("NameNoteBook : ${nameNoteBook.titleNoteBook}")
+                ?: return
+            Text("NameNoteBook : ${nameNoteBook.titleNoteBook}")
+            Text("DateNoteBook : ${nameNoteBook.dateCreation}")
 
             Spacer(modifier = Modifier.padding(top = 16.dp))
 
