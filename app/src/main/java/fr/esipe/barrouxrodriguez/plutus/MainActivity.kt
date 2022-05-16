@@ -14,8 +14,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import fr.esipe.barrouxrodriguez.plutus.model.screen.HomePageScreen
-import fr.esipe.barrouxrodriguez.plutus.model.screen.NoteBookScreen
+import fr.esipe.barrouxrodriguez.plutus.model.screen.*
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NameTagViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NoteBookViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.TransactionViewModel
@@ -65,15 +64,20 @@ lateinit var ntViewModel: NameTagViewModel
 lateinit var transactionViewModel: TransactionViewModel
 lateinit var notebookViewModel: NoteBookViewModel
 
-
 @Composable
 fun NavigationBasicsApp() {
     val navController = rememberNavController()
     val noteBookScreen = NoteBookScreen()
     val homePageScreen = HomePageScreen()
+    val transactionScreen = TransactionScreen()
+    val budgetScreen = BudgetScreen()
+    val nameTagScreen = NameTagScreen()
 
     NavHost(navController = navController, startDestination = "homepage_screen") {
         composable("homepage_screen") { homePageScreen.NoteBookDisplay(navController) }
         composable("notebook_screen") { noteBookScreen.NoteBookScreen(navController) }
+        composable("transaction_screen") { transactionScreen.TransactionScreen(navController) }
+        composable("budget_screen") { budgetScreen.BudgetScreen(navController) }
+        composable("nameTag_screen") { nameTagScreen.NameTagScreen(navController) }
     }
 }

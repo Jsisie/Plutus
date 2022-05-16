@@ -10,13 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
-class NameTagScreen {
+class BudgetScreen {
     @SuppressLint("NotConstructor")
     @Composable
-    fun NameTagScreen(navController: NavController) {
+    fun BudgetScreen(navController: NavController) {
         Button(modifier = Modifier
             .padding(10.dp),
-            onClick = { navController.navigate("transaction_screen") }) {
+            onClick = { navController.navigate("notebook_screen") }) {
             Text(text = "Return")
         }
 
@@ -27,10 +27,13 @@ class NameTagScreen {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("Welcome to the NameTag page !")
+            Text("Welcome to the Budget page !")
 
             Spacer(modifier = Modifier.padding(top = 16.dp))
 
+            Button(onClick = { navController.navigate("transaction_screen") }) {
+                Text(text = "Transaction")
+            }
         }
     }
 }
