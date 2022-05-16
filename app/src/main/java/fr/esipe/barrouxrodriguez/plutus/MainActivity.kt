@@ -26,12 +26,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import fr.esipe.barrouxrodriguez.plutus.model.Converters
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NameTagViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NoteBookViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.TransactionViewModel
 import fr.esipe.barrouxrodriguez.plutus.ui.theme.PlutusTheme
+
 
 class MainActivity : ComponentActivity() {
 
@@ -44,7 +49,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-
                     val context = LocalContext.current
 
                     ntViewModel = viewModel(
@@ -66,7 +70,8 @@ class MainActivity : ComponentActivity() {
                             context.applicationContext as Application
                         )
                     )
-                    NoteBookDisplay()
+//                    NoteBookDisplay()
+                    NavigationBasicsApp()
                 }
             }
         }
@@ -79,7 +84,37 @@ lateinit var notebookViewModel: NoteBookViewModel
 
 
 @Composable
-fun NoteBookDisplay() {
+fun NavigationBasicsApp() {
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") { NoteBookDisplay(navController) }
+        composable("notebook_screen") { NoteBookScreen(navController) }
+    }
+}
+
+@Composable
+fun NoteBookScreen(navController: NavController) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text("Welcome !")
+
+        Spacer(modifier = Modifier.padding(top = 16.dp))
+
+        Button(onClick = { navController.navigate("home") }) {
+            Text(text = "Exit")
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun NoteBookDisplay(navController: NavController) {
     // List of database notebooks
     val notebooks = notebookViewModel.readAllData.observeAsState(emptyList()).value
 
@@ -88,7 +123,7 @@ fun NoteBookDisplay() {
     val openDeleteDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
 
     val selectedNoteBook: MutableState<NoteBook> = remember {
-        mutableStateOf(NoteBook("placeholder"))
+        mutableStateOf(NoteBook("notebook_screen"))
     }
 
     Scaffold(
@@ -107,7 +142,6 @@ fun NoteBookDisplay() {
                 }
             }
         },
-
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 openAddDialog.value = true
@@ -127,15 +161,18 @@ fun NoteBookDisplay() {
             }
         }
     ) {
-
         LazyColumn {
             items(notebooks.size) { i ->
-                Card(elevation = 5.dp, modifier = Modifier.padding(15.dp)) {
+                Card(elevation = 5.dp, modifier = Modifier.padding(15.dp),
+                    onClick = {
+                        navController.navigate("notebook_screen")
+                    }) {
                     Row(
                         Modifier
                             .fillMaxSize()
-                            .padding(5.dp)
-                    ) {
+                            .padding(5.dp),
+
+                        ) {
                         Column {
                             Text(text = stringResource(id = R.string.title) + ": ${
                                 notebooks[i].titleNoteBook
@@ -184,7 +221,6 @@ fun NoteBookDisplay() {
                 }
             }
         }
-
         AddNoteBookDialog(openAddDialog)
         EditNoteBookDialog(openEditDialog, selectedNoteBook.value)
         DeleteNoteBookDialog(openDeleteDialog, selectedNoteBook.value)
@@ -194,7 +230,8 @@ fun NoteBookDisplay() {
 @Composable
 fun AddNoteBookDialog(openAddDialog: MutableState<Boolean>) {
     if (openAddDialog.value) {
-        val notebookName = remember { mutableStateOf(TextFieldValue("")) }
+        val notebookName =
+            remember { mutableStateOf(TextFieldValue("")) } // TODO - initialize to null ?
         AlertDialog(
             onDismissRequest = {
                 openAddDialog.value = false

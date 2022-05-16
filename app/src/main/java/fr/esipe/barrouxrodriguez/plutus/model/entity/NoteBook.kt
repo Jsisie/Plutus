@@ -2,6 +2,7 @@ package fr.esipe.barrouxrodriguez.plutus.model.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import org.jetbrains.annotations.NotNull
 import java.util.*
 
 @Entity
