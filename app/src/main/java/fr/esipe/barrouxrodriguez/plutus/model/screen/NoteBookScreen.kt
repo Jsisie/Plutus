@@ -21,8 +21,6 @@ class NoteBookScreen {
     @SuppressLint("NotConstructor")
     @Composable
     fun NoteBookScreen(navController: NavController, idNoteBook: Int?) {
-
-
         Button(modifier = Modifier
             .padding(10.dp),
             onClick = { navController.navigate("homepage_screen") }) {
@@ -39,15 +37,14 @@ class NoteBookScreen {
             Text("Welcome to the NoteBook page !")
             Text("idNoteBook : $idNoteBook")
 
-            Log.i("ALED", "ALE3D")
+            val noteBookWithLists =
+                idNoteBook?.let { notebookVM.findNoteBookById(it).observeAsState() }
+                    ?: return
 
-            val noteBookWithLists = idNoteBook?.let { notebookVM.findNoteBookById(it).observeAsState().value }
-                ?: return
 
-
-            Text("NameNoteBook : ${noteBookWithLists.noteBook.titleNoteBook}")
+            Text("NameNoteBook : ${noteBookWithLists.value?.noteBook?.titleNoteBook}")
             Text("DateNoteBook : ${
-                noteBookWithLists.noteBook.dateCreation?.let { it1 ->
+                noteBookWithLists.value?.noteBook?.dateCreation?.let { it1 ->
                     Converters.printDate(
                         it1, "yyyy-MM-dd"
                     )
