@@ -41,13 +41,13 @@ class NoteBookScreen {
 
             Log.i("ALED", "ALE3D")
 
-            val test = idNoteBook?.let { notebookVM.findNoteBookById(it).observeAsState() }
+            val noteBookWithLists = idNoteBook?.let { notebookVM.findNoteBookById(it).observeAsState().value }
                 ?: return
 
 
-            Text("NameNoteBook : ${test.value?.noteBook?.titleNoteBook}")
+            Text("NameNoteBook : ${noteBookWithLists.noteBook.titleNoteBook}")
             Text("DateNoteBook : ${
-                test.value?.noteBook?.dateCreation?.let { it1 ->
+                noteBookWithLists.noteBook.dateCreation?.let { it1 ->
                     Converters.printDate(
                         it1, "yyyy-MM-dd"
                     )
