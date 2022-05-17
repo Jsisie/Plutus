@@ -1,5 +1,6 @@
 package fr.esipe.barrouxrodriguez.plutus.model.dao
 
+import android.database.sqlite.SQLiteConstraintException
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
@@ -15,9 +16,11 @@ interface NoteBookDao {
     fun loadNoteBookWithTransactionsAndBudgetById(noteBook: Int): LiveData<NoteBookWithTransactionsAndBudget>
 
     @Insert
+    @Throws(SQLiteConstraintException::class)
     suspend fun insertAll(vararg noteBook: NoteBook)
 
     @Update
+    @Throws(SQLiteConstraintException::class)
     suspend fun update(noteBook: NoteBook)
 
     @Delete

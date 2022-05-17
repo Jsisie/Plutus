@@ -95,9 +95,11 @@ class HomePageScreen {
 
                                 ) {
                                 Column {
-                                    Text(text = stringResource(id = R.string.title) + ": ${
-                                        notebooks[i].titleNoteBook
-                                    }")
+                                    Text(
+                                        text = stringResource(id = R.string.title) + ": ${
+                                            notebooks[i].titleNoteBook
+                                        }"
+                                    )
                                     Text(
                                         text = stringResource(id = R.string.creation_date) + ": ${
                                             notebooks[i].dateCreation?.let { it1 ->
@@ -121,8 +123,10 @@ class HomePageScreen {
                                         bottom = 5.dp
                                     )
                                 ) {
-                                    Icon(Icons.Filled.Create,
-                                        stringResource(id = R.string.edit_notebook))
+                                    Icon(
+                                        Icons.Filled.Create,
+                                        stringResource(id = R.string.edit_notebook)
+                                    )
                                 }
                                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                                 Button(
@@ -137,8 +141,10 @@ class HomePageScreen {
                                         bottom = 5.dp
                                     )
                                 ) {
-                                    Icon(Icons.Filled.Delete,
-                                        stringResource(id = R.string.delete_notebook))
+                                    Icon(
+                                        Icons.Filled.Delete,
+                                        stringResource(id = R.string.delete_notebook)
+                                    )
                                 }
                             }
                         })
@@ -155,6 +161,10 @@ class HomePageScreen {
         if (openAddDialog.value) {
             val notebookName =
                 remember { mutableStateOf(TextFieldValue("")) }
+            var isError = remember { mutableStateOf(false) }
+
+
+
             AlertDialog(
                 onDismissRequest = {
                     openAddDialog.value = false
@@ -163,14 +173,33 @@ class HomePageScreen {
                     Text(text = stringResource(id = R.string.add_notebook))
                 },
                 text = {
+                    Column{
                     TextField(
                         value = notebookName.value,
-                        onValueChange = { newText -> notebookName.value = newText })
+                        onValueChange = { newText ->
+                            isError.value = false
+                            notebookName.value = newText
+                        })
+                        if(isError.value){
+                            Text(
+                                // TODO text translation
+                                text = "Name must not be empty or superior than 20 characters",
+                                color = MaterialTheme.colors.error,
+                                style = MaterialTheme.typography.caption,
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
+                        }
+                    }
                 },
                 confirmButton = {
                     Button(onClick = {
-                        notebookViewModel.insertAll(NoteBook(notebookName.value.text))
-                        openAddDialog.value = false
+                        val text = notebookName.value.text
+                        if (text.isEmpty() || text.length > 20) {
+                            isError.value = true
+                        } else {
+                            notebookViewModel.insertAll(NoteBook(notebookName.value.text))
+                            openAddDialog.value = false
+                        }
                     }) {
                         Text(text = stringResource(id = R.string.add))
                     }

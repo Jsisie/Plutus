@@ -28,9 +28,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    class BudgetModelFactory(
-        private val application: Application,
-    ) : ViewModelProvider.Factory {
+    class BudgetModelFactory(private val application: Application) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")
             if (modelClass.isAssignableFrom(BudgetViewModel::class.java)) {
