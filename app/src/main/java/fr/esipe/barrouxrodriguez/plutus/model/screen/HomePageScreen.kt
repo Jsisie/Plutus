@@ -80,7 +80,7 @@ class HomePageScreen {
         ) {
             LazyColumn {
                 items(notebooks.size) { i ->
-                    // TODO - Get name of the NoteBook clicked on
+
                     val idNoteBook = notebooks[i].idNotebook
 
                     Card(elevation = 5.dp, modifier = Modifier.padding(15.dp),

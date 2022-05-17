@@ -5,12 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
+import fr.esipe.barrouxrodriguez.plutus.model.Converters
 import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
 
 class NoteBookScreen {
@@ -36,8 +35,15 @@ class NoteBookScreen {
             // TODO - Get NoteBook by id to print name (beurk)
             val nameNoteBook = idNoteBook?.let { notebookViewModel.readAllData.value?.get(it-1) }
                 ?: return
+
             Text("NameNoteBook : ${nameNoteBook.titleNoteBook}")
-            Text("DateNoteBook : ${nameNoteBook.dateCreation}")
+            Text("DateNoteBook : ${
+                nameNoteBook.dateCreation?.let { it1 ->
+                    Converters.printDate(
+                        it1, "yyyy-MM-dd"
+                    )
+                }
+            }")
 
             Spacer(modifier = Modifier.padding(top = 16.dp))
 
