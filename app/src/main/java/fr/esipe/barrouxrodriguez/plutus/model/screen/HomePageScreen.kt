@@ -98,6 +98,8 @@ class HomePageScreen {
                                     Text(
                                         text = stringResource(id = R.string.title) + ": ${
                                             notebooks[i].titleNoteBook
+                                        }: ${
+                                            notebooks[i].idNotebook
                                         }"
                                     )
                                     Text(

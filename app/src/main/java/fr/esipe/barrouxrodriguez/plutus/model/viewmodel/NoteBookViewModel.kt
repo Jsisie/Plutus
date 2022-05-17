@@ -9,6 +9,7 @@ import androidx.lifecycle.*
 import fr.esipe.barrouxrodriguez.plutus.model.NoteBookDatabase
 import fr.esipe.barrouxrodriguez.plutus.model.dao.NoteBookDao
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
+import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBookWithTransactionsAndBudget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -29,6 +30,10 @@ class NoteBookViewModel(application: Application) : AndroidViewModel(application
 
     init {
         readAllData = noteBookDao.getAll()
+    }
+
+    fun findNoteBookById(idNoteBook: Int): LiveData<NoteBookWithTransactionsAndBudget> {
+        return noteBookDao.loadNoteBookWithTransactionsAndBudgetById(idNoteBook)
     }
 
     @Throws(SQLiteConstraintException::class)
