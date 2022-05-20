@@ -80,12 +80,11 @@ class HomePageScreen {
         ) {
             LazyColumn {
                 items(notebooks.size) { i ->
-
-                    val idNoteBook = notebooks[i].idNotebook
+                    val noteBook = notebooks[i]
 
                     Card(elevation = 5.dp, modifier = Modifier.padding(15.dp),
                         onClick = {
-                            navController.navigate("notebook_screen/$idNoteBook")
+                            navController.navigate("notebook_screen/${noteBook.idNotebook}")
                         },
                         content = {
                             Row(
@@ -97,14 +96,12 @@ class HomePageScreen {
                                 Column {
                                     Text(
                                         text = stringResource(id = R.string.title) + ": ${
-                                            notebooks[i].titleNoteBook
-                                        }: ${
-                                            notebooks[i].idNotebook
+                                            noteBook.titleNoteBook
                                         }"
                                     )
                                     Text(
                                         text = stringResource(id = R.string.creation_date) + ": ${
-                                            notebooks[i].dateCreation?.let { it1 ->
+                                            noteBook.dateCreation?.let { it1 ->
                                                 Converters.printDate(
                                                     it1, "yyyy-MM-dd"
                                                 )
@@ -116,7 +113,7 @@ class HomePageScreen {
                                 Button(
                                     onClick = {
                                         openEditDialog.value = true
-                                        selectedNoteBook.value = notebooks[i]
+                                        selectedNoteBook.value = noteBook
                                     },
                                     contentPadding = PaddingValues(
                                         start = 2.dp,
@@ -134,7 +131,7 @@ class HomePageScreen {
                                 Button(
                                     onClick = {
                                         openDeleteDialog.value = true
-                                        selectedNoteBook.value = notebooks[i]
+                                        selectedNoteBook.value = noteBook
                                     },
                                     contentPadding = PaddingValues(
                                         start = 2.dp,
@@ -163,7 +160,7 @@ class HomePageScreen {
         if (openAddDialog.value) {
             val notebookName =
                 remember { mutableStateOf(TextFieldValue("")) }
-            var isError = remember { mutableStateOf(false) }
+            val isError = remember { mutableStateOf(false) }
 
 
 
@@ -180,7 +177,9 @@ class HomePageScreen {
                         value = notebookName.value,
                         onValueChange = { newText ->
                             isError.value = false
-                            notebookName.value = newText
+                            if(notebookName.value.text.length < 20){
+                                notebookName.value = newText
+                            }
                         })
                         if(isError.value){
                             Text(
