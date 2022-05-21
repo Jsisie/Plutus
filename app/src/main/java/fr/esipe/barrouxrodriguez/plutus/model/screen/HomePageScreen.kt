@@ -198,7 +198,7 @@ class HomePageScreen {
                         if (text.isEmpty() || text.length > 20) {
                             isError.value = true
                         } else {
-                            notebookViewModel.insertAll(NoteBook(notebookName.value.text))
+                            notebookViewModel.insertAll(NoteBook(text))
                             openAddDialog.value = false
                         }
                     }) {
@@ -266,7 +266,6 @@ class HomePageScreen {
                 },
                 confirmButton = {
                     Button(onClick = {
-
                         notebookViewModel.update(
                             NoteBook(
                                 notebookName.value.text,
