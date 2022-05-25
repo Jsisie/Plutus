@@ -120,7 +120,7 @@ class NoteBookScreen {
                 }
             }
         ) {
-            Column() {
+            Column {
                 Column(
                     modifier = Modifier
                         .padding(16.dp)
@@ -144,11 +144,12 @@ class NoteBookScreen {
                     )
                 }
 
+                // TODO - remove column, just put Text instead
                 Column(
                     modifier = Modifier
                         .padding(16.dp)
-                        .fillMaxSize()
-                        .weight(1f / 11f, fill = true),
+                        .fillMaxWidth(),
+//                        .weight(1f / 11f, fill = true),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 )
@@ -179,7 +180,6 @@ class NoteBookScreen {
                             }
                         }
                     }
-
                 }
             }
         }
