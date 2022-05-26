@@ -77,8 +77,8 @@ class HomePageScreen {
 
                 }
             }
-        ) {
-            LazyColumn {
+        ) { innerTag ->
+            LazyColumn (Modifier.padding(innerTag)){
                 items(notebooks.size) { i ->
                     val noteBook = notebooks[i]
 
