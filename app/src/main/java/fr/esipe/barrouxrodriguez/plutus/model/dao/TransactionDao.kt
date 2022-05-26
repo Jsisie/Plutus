@@ -18,7 +18,7 @@ interface TransactionDao {
 
     @androidx.room.Transaction
     @Query("SELECT *  FROM `Transaction` WHERE idTransaction = (:transaction)")
-    fun loadByIdWithNameTags(transaction: Int): TransactionWithNameTags?
+    fun loadByIdWithNameTags(transaction: Int): LiveData<TransactionWithNameTags>
 
     @Insert(onConflict = REPLACE)
     suspend fun insertAll(vararg transaction: Transaction)

@@ -120,7 +120,7 @@ class NoteBookScreen {
                 }
             }
         ) {
-            Column {
+            Column () {
                     // TODO - change in string.xml
                     Text("date de creation : ${
                         noteBookWithLists.value?.noteBook?.dateCreation?.let { it1 ->
@@ -152,9 +152,14 @@ class NoteBookScreen {
                     LazyColumn {
                         noteBookWithLists.value?.listTransaction?.size?.let { it1 ->
                             items(it1) { i ->
+                                // TODO - makes this works
+                                val transactionList = (i+1)?.let {
+                                    transactionViewModel.findTransactionsById(it).observeAsState()
+                                }
 
+//                                val transaction = transactionViewModel.findTransactionsById(i)
                                 Button(onClick = { navController.navigate("transaction_screen/$idNoteBook") }) {
-                                    Text(text = "$i")
+                                    Text(text = "${transactionList.value?.transaction?.title_transaction}")
                                 }
                             }
                         }

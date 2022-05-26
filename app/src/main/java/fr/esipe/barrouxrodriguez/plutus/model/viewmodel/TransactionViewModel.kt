@@ -18,6 +18,10 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
         readAllData = transactionDao.getAllWithNameTags()
     }
 
+    fun findTransactionsById(idTransaction: Int): LiveData<TransactionWithNameTags> {
+        return transactionDao.loadByIdWithNameTags(idTransaction)
+    }
+
     fun insertAll(vararg transaction: Transaction) {
         viewModelScope.launch(Dispatchers.IO) {
             transactionDao.insertAll(*transaction)
