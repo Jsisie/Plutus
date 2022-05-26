@@ -183,8 +183,7 @@ class HomePageScreen {
                         })
                         if(isError.value){
                             Text(
-                                // TODO text translation
-                                text = "Name must not be empty or superior than 20 characters",
+                                text = stringResource(id = R.string.message_size_error_message),
                                 color = MaterialTheme.colors.error,
                                 style = MaterialTheme.typography.caption,
                                 modifier = Modifier.padding(start = 16.dp)

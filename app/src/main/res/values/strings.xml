@@ -20,5 +20,11 @@
     <string name="no">No</string>
     <string name="edit_notebook_name">Edit NoteBook name</string>
     <string name="modify_notebook">Modify NoteBook</string>
+    <string name="message_size_error_message">Name must not be empty or superior than 20 characters</string>
+    <string name="transaction">Transaction</string>
+    <string name="add_transaction">Add Transaction</string>
+    <string name="create_transaction">Create new Transaction</string>
+    <string name="budget">Budget</string>
+    <string name="notebook_alreadyexists_error_message">NoteBook already existing, find an other name</string>
 
 </resources>

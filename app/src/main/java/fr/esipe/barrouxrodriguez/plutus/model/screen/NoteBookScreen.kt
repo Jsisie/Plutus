@@ -81,8 +81,7 @@ class NoteBookScreen {
 //                        .paddingFromBaseline(30.dp)
                 )
                 {
-                    // TODO - change in string.xml
-                    Icon(Icons.Filled.Add, "Create Transaction")
+                    Icon(Icons.Filled.Add, stringResource(id = R.string.create_transaction))
                 }
             },
             isFloatingActionButtonDocked = true,
@@ -98,10 +97,7 @@ class NoteBookScreen {
                             enabled = false,
                             onClick = {
                                 navController.navigate("notebook_screen/$idNoteBook")
-                            }) {
-                            // TODO - change in string.xml
-                            Text(text = "Transaction")
-                        }
+                            }) { Text(stringResource(id = R.string.transaction)) }
                     }
                     Column(modifier = Modifier
                         .weight(1f / 2f, fill = true),
@@ -112,17 +108,13 @@ class NoteBookScreen {
                             .padding(10.dp),
                             onClick = {
                                 navController.navigate("budget_screen/$idNoteBook")
-                            }) {
-                            // TODO - change in string.xml
-                            Text(text = "Budget")
-                        }
+                            }) { Text(stringResource(id = R.string.budget)) }
                     }
                 }
             }
         ) { innerPadding ->
             Column (Modifier.padding(innerPadding)) {
-                    // TODO - change in string.xml
-                    Text("date de creation : ${
+                    Text("${stringResource(id = R.string.creation_date)} : ${
                         noteBookWithLists.value?.noteBook?.dateCreation?.let { it1 ->
                             Converters.printDate(
                                 it1, "yyyy-MM-dd"
@@ -134,9 +126,7 @@ class NoteBookScreen {
                         textAlign = TextAlign.Right
                     )
 
-                Text(
-                    // TODO - change in string.xml
-                    "Transactions :",
+                Text(stringResource(id = R.string.transaction),
                     Modifier.fillMaxWidth(),
                     fontSize = 35.sp,
                     textAlign = TextAlign.Center
@@ -181,8 +171,7 @@ class NoteBookScreen {
                     openAddDialog.value = false
                 },
                 title = {
-                    // TODO - change in string.xml
-                    Text(text = "Add transaction")
+                    Text(stringResource(id = R.string.add_transaction))
                 },
                 text = {
                     Column {
@@ -195,9 +184,7 @@ class NoteBookScreen {
                                 }
                             })
                         if (isError.value) {
-                            Text(
-                                // TODO - change in string.xml
-                                text = "Name must not be empty or superior than 20 characters",
+                            Text(stringResource(id = R.string.message_size_error_message),
                                 color = MaterialTheme.colors.error,
                                 style = MaterialTheme.typography.caption,
                                 modifier = Modifier.padding(start = 16.dp)

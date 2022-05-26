@@ -20,5 +20,11 @@
     <string name="no">Non</string>
     <string name="edit_notebook_name">Modifier le nom du carnet de compte</string>
     <string name="modify_notebook">Modifier le carnet de compte</string>
+    <string name="message_size_error_message">Le nom ne doit pas être vide ou supérieur à 20 caractères</string>
+    <string name="transaction">Transaction</string>
+    <string name="add_transaction">Ajouter une transaction</string>
+    <string name="create_transaction">Créer une nouvelle transaction</string>
+    <string name="budget">Budget</string>
+    <string name="notebook_alreadyexists_error_message">Ce carnet de compte existe déjà, veuillez entrez un nom différent</string>
 
 </resources>

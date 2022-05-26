@@ -18,7 +18,7 @@ class NoteBookViewModel(application: Application) : AndroidViewModel(application
     private var noteBookDao: NoteBookDao = NoteBookDatabase.getInstance(application).NoteBookDao()
 
     private fun duplicationHandler() {
-        // TODO: text translation
+        // TODO - fix error with getting tex value R.string
         Handler(Looper.getMainLooper()).post {
             Toast.makeText(
                 getApplication<Application>(),
