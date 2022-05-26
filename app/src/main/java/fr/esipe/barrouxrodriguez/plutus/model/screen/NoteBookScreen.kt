@@ -119,8 +119,8 @@ class NoteBookScreen {
                     }
                 }
             }
-        ) {
-            Column () {
+        ) { innerPadding ->
+            Column (Modifier.padding(innerPadding)) {
                     // TODO - change in string.xml
                     Text("date de creation : ${
                         noteBookWithLists.value?.noteBook?.dateCreation?.let { it1 ->
