@@ -121,15 +121,6 @@ class NoteBookScreen {
             }
         ) {
             Column {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize()
-                        .weight(1f / 11f, fill = true),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                )
-                {
                     // TODO - change in string.xml
                     Text("date de creation : ${
                         noteBookWithLists.value?.noteBook?.dateCreation?.let { it1 ->
@@ -142,38 +133,26 @@ class NoteBookScreen {
                         fontSize = 15.sp,
                         textAlign = TextAlign.Right
                     )
-                }
 
-                // TODO - remove column, just put Text instead
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-//                        .weight(1f / 11f, fill = true),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                Text(
+                    // TODO - change in string.xml
+                    "Transactions :",
+                    Modifier.fillMaxWidth(),
+                    fontSize = 35.sp,
+                    textAlign = TextAlign.Center
                 )
-                {
-                    Text(
-                        // TODO - change in string.xml
-                        "Transactions :",
-                        Modifier.fillMaxWidth(),
-                        fontSize = 35.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
 
                 Column(
                     modifier = Modifier
                         .padding(16.dp)
-                        .fillMaxSize()
-                        .weight(9f / 11f, fill = true),
+                        .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 )
                 {
                     LazyColumn {
                         noteBookWithLists.value?.listTransaction?.size?.let { it1 ->
                             items(it1) { i ->
+
                                 Button(onClick = { navController.navigate("transaction_screen/$idNoteBook") }) {
                                     Text(text = "$i")
                                 }
