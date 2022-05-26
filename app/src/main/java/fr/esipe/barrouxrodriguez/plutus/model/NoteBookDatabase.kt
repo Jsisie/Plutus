@@ -1,9 +1,6 @@
 package fr.esipe.barrouxrodriguez.plutus.model
 
-import android.app.Application
 import android.content.Context
-import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -16,8 +13,6 @@ import fr.esipe.barrouxrodriguez.plutus.model.entity.Budget
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
 import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
-import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NoteBookViewModel
-import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
 
 @Database(
     version = 1,

@@ -20,7 +20,6 @@ import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NoteBookViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.TransactionViewModel
 import fr.esipe.barrouxrodriguez.plutus.ui.theme.PlutusTheme
 
-
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,30 +78,22 @@ fun NavigationBasicsApp() {
 
         composable("notebook_screen/{idNoteBook}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("idNoteBook")
-            // TODO - fonctionne mais... DEGUEULASSE
-            if (id != null)
-                noteBookScreen.NoteBookScreen(navController, id.toInt())
+            noteBookScreen.NoteBookScreen(navController, id?.toInt())
         }
 
         composable("transaction_screen/{idNoteBook}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("idNoteBook")
-            // TODO - fonctionne mais... DEGUEULASSE
-            if (id != null)
-                transactionScreen.TransactionScreen(navController, id.toInt())
+            transactionScreen.TransactionScreen(navController, id?.toInt())
         }
 
         composable("budget_screen/{idNoteBook}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("idNoteBook")
-            // TODO - fonctionne mais... DEGUEULASSE
-            if (id != null)
-                budgetScreen.BudgetScreen(navController, id.toInt())
+            budgetScreen.BudgetScreen(navController, id?.toInt())
         }
 
         composable("nameTag_screen/{idNoteBook}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("idNoteBook")
-            // TODO - fonctionne mais... DEGUEULASSE
-            if (id != null)
-                nameTagScreen.NameTagScreen(navController, id.toInt())
+            nameTagScreen.NameTagScreen(navController, id?.toInt())
         }
     }
 }
