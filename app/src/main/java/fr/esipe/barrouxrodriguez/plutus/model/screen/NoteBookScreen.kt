@@ -152,14 +152,14 @@ class NoteBookScreen {
                     LazyColumn {
                         noteBookWithLists.value?.listTransaction?.size?.let { it1 ->
                             items(it1) { i ->
-                                // TODO - makes this works
-                                val transactionList = (i+1)?.let {
+                                // TODO - Could be implemented better
+                                val transactionList = (i+1).let {
                                     transactionViewModel.findTransactionsById(it).observeAsState()
                                 }
-
 //                                val transaction = transactionViewModel.findTransactionsById(i)
                                 Button(onClick = { navController.navigate("transaction_screen/$idNoteBook") }) {
                                     Text(text = "${transactionList.value?.transaction?.title_transaction}")
+//                                    Text(text = "${transaction.value?.transaction?.title_transaction}")
                                 }
                             }
                         }
