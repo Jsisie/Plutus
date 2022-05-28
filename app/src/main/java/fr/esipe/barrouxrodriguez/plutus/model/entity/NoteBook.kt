@@ -10,5 +10,6 @@ import java.util.*
 data class NoteBook(
     @NotNull val titleNoteBook: String,
     val dateCreation: Date? = Calendar.getInstance().time,
+    val totalAmount : Int? = 0,
     @PrimaryKey(autoGenerate = true) val idNotebook: Int = 0
 )

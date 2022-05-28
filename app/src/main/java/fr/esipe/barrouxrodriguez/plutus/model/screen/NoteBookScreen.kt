@@ -3,6 +3,7 @@ package fr.esipe.barrouxrodriguez.plutus.model.screen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -15,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -113,22 +115,30 @@ class NoteBookScreen {
                 }
             }
         ) { innerPadding ->
-            Column (Modifier.padding(innerPadding)) {
-                    Text("${stringResource(id = R.string.creation_date)} : ${
-                        noteBookWithLists.value?.noteBook?.dateCreation?.let { it1 ->
-                            Converters.printDate(
-                                it1, "yyyy-MM-dd"
-                            )
-                        }
-                    }",
-                        Modifier.fillMaxWidth(),
-                        fontSize = 15.sp,
-                        textAlign = TextAlign.Right
-                    )
+            Column(Modifier.padding(innerPadding)) {
+                Text("${stringResource(id = R.string.creation_date)} : ${
+                    noteBookWithLists.value?.noteBook?.dateCreation?.let { it1 ->
+                        Converters.printDate(
+                            it1, "yyyy-MM-dd"
+                        )
+                    }
+                }",
+                    Modifier.fillMaxWidth(),
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Right
+                )
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    // TODO - change it in strings.xml
+                    text = "${noteBookWithLists.value?.noteBook?.totalAmount} €",
+                    fontSize = 50.sp,
+                    textAlign = TextAlign.Center
+                )
+
 
                 Text(stringResource(id = R.string.transaction),
-                    Modifier.fillMaxWidth(),
-                    fontSize = 35.sp,
+                    modifier =Modifier.fillMaxWidth(),
+                    fontSize = 30.sp,
                     textAlign = TextAlign.Center
                 )
 
@@ -143,12 +153,17 @@ class NoteBookScreen {
                         noteBookWithLists.value?.listTransaction?.size?.let { it1 ->
                             items(it1) { i ->
                                 // TODO - Could be implemented better
-                                val transactionList = (i+1).let {
+                                val transactionList = (i + 1).let {
                                     transactionViewModel.findTransactionsById(it).observeAsState()
                                 }
 //                                val transaction = transactionViewModel.findTransactionsById(i)
-                                Button(onClick = { navController.navigate("transaction_screen/$idNoteBook") }) {
-                                    Text(text = "${transactionList.value?.transaction?.title_transaction}")
+                                Button(modifier = Modifier.padding(5.dp),
+                                    onClick = { navController.navigate("transaction_screen/$idNoteBook") }) {
+                                    Column {
+                                        Text(text = "${transactionList.value?.transaction?.title_transaction}")
+                                        // TODO - change it in strings.xml
+                                        Text(text = "${transactionList.value?.transaction?.amount_transaction} €")
+                                    }
 //                                    Text(text = "${transaction.value?.transaction?.title_transaction}")
                                 }
                             }
@@ -157,13 +172,14 @@ class NoteBookScreen {
                 }
             }
         }
-        AddNoteBookDialog(openAddDialog, idNoteBook)
+        AddTransactionDialog(openAddDialog, idNoteBook)
     }
 
     @Composable
-    fun AddNoteBookDialog(openAddDialog: MutableState<Boolean>, idNoteBook: Int) {
+    fun AddTransactionDialog(openAddDialog: MutableState<Boolean>, idNoteBook: Int) {
         if (openAddDialog.value) {
             val transactionName = remember { mutableStateOf(TextFieldValue("")) }
+            val transactionAmount = remember { mutableStateOf(TextFieldValue("")) }
             val isError = remember { mutableStateOf(false) }
 
             AlertDialog(
@@ -175,21 +191,50 @@ class NoteBookScreen {
                 },
                 text = {
                     Column {
-                        TextField(
-                            value = transactionName.value,
-                            onValueChange = { newText ->
-                                isError.value = false
-                                if (transactionName.value.text.length < 25) {
-                                    transactionName.value = newText
+                        Row {
+                            // TODO - change it in strings.xml
+                            Text(text = "Title : ")
+                            TextField(
+                                modifier = Modifier.padding(3.dp),
+                                value = transactionName.value,
+                                onValueChange = { newText ->
+                                    isError.value = false
+                                    if (transactionName.value.text.length < 25) {
+                                        transactionName.value = newText
+                                    }
                                 }
-                            })
-                        if (isError.value) {
-                            Text(stringResource(id = R.string.message_size_error_message),
-                                color = MaterialTheme.colors.error,
-                                style = MaterialTheme.typography.caption,
-                                modifier = Modifier.padding(start = 16.dp)
                             )
+                            if (isError.value) {
+                                Text(stringResource(id = R.string.message_size_error_message),
+                                    color = MaterialTheme.colors.error,
+                                    style = MaterialTheme.typography.caption,
+                                    modifier = Modifier.padding(start = 16.dp)
+                                )
+                            }
                         }
+                        Row {
+                            // TODO - change it in strings.xml
+                            Text(text = "Amount : ")
+                            TextField(
+                                modifier = Modifier.padding(3.dp),
+                                value = transactionAmount.value,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                onValueChange = { newText ->
+                                    isError.value = false
+                                    if (transactionAmount.value.text.length < 25) {
+                                        transactionAmount.value = newText
+                                    }
+                                }
+                            )
+                            if (isError.value) {
+                                Text(stringResource(id = R.string.message_size_error_message),
+                                    color = MaterialTheme.colors.error,
+                                    style = MaterialTheme.typography.caption,
+                                    modifier = Modifier.padding(start = 16.dp)
+                                )
+                            }
+                        }
+//                        }
                     }
                 },
                 confirmButton = {
@@ -199,7 +244,7 @@ class NoteBookScreen {
                             isError.value = true
                         } else {
                             transactionViewModel.insertAll(Transaction(title_transaction = text,
-                                amount_transaction = 0,
+                                amount_transaction = transactionAmount.value.text.toInt(),
                                 idNotebook = idNoteBook))
                             openAddDialog.value = false
                         }

@@ -21,7 +21,7 @@ class NoteBookViewModel(application: Application) : AndroidViewModel(application
         // TODO - fix error with getting tex value R.string
         Handler(Looper.getMainLooper()).post {
             Toast.makeText(
-                getApplication<Application>(),
+                getApplication(),
                 "Notebook already existing, find an another name",
                 Toast.LENGTH_SHORT
             ).show()
