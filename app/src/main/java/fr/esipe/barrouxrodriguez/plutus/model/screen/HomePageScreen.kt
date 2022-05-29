@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import fr.esipe.barrouxrodriguez.plutus.R
+import fr.esipe.barrouxrodriguez.plutus.model.AlertDialogUtil
 import fr.esipe.barrouxrodriguez.plutus.model.Converters
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
 import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
@@ -78,7 +79,7 @@ class HomePageScreen {
                 }
             }
         ) { innerTag ->
-            LazyColumn (Modifier.padding(innerTag)){
+            LazyColumn(Modifier.padding(innerTag)) {
                 items(notebooks.size) { i ->
                     val noteBook = notebooks[i]
 
@@ -149,141 +150,51 @@ class HomePageScreen {
                         })
                 }
             }
-            AddNoteBookDialog(openAddDialog)
-            EditNoteBookDialog(openEditDialog, selectedNoteBook.value)
-            DeleteNoteBookDialog(openDeleteDialog, selectedNoteBook.value)
-        }
-    }
-
-    @Composable
-    fun AddNoteBookDialog(openAddDialog: MutableState<Boolean>) {
-        if (openAddDialog.value) {
-            val notebookName =
-                remember { mutableStateOf(TextFieldValue("")) }
-            val isError = remember { mutableStateOf(false) }
-
-
-
-            AlertDialog(
-                onDismissRequest = {
-                    openAddDialog.value = false
-                },
-                title = {
-                    Text(text = stringResource(id = R.string.add_notebook))
-                },
-                text = {
-                    Column{
-                    TextField(
-                        value = notebookName.value,
-                        onValueChange = { newText ->
-                            isError.value = false
-                            if(notebookName.value.text.length < 20){
-                                notebookName.value = newText
-                            }
-                        })
-                        if(isError.value){
-                            Text(
-                                text = stringResource(id = R.string.message_size_error_message),
-                                color = MaterialTheme.colors.error,
-                                style = MaterialTheme.typography.caption,
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
-                        }
+            
+            // Add notebook
+            AlertDialogUtil.ShowAlertDialog(
+                openDialog = openAddDialog,
+                title = stringResource(id = R.string.add_notebook),
+                confirmText = stringResource(id = R.string.add),
+                dismissText = stringResource(id = R.string.cancel),
+                onConfirmClick = { text, isError ->
+                    if (text.isEmpty() || text.length > 20) {
+                        isError.value = true
+                    } else {
+                        notebookViewModel.insertAll(NoteBook(text))
                     }
                 },
-                confirmButton = {
-                    Button(onClick = {
-                        val text = notebookName.value.text
-                        if (text.isEmpty() || text.length > 20) {
-                            isError.value = true
-                        } else {
-                            notebookViewModel.insertAll(NoteBook(text))
-                            openAddDialog.value = false
-                        }
-                    }) {
-                        Text(text = stringResource(id = R.string.add))
-                    }
-                },
-                dismissButton = {
-                    Button(onClick = {
-                        openAddDialog.value = false
-                    }) {
-                        Text(text = stringResource(id = R.string.cancel))
-                    }
-                }
+                onErrorText = stringResource(id = R.string.message_size_error_message)
             )
-        }
-    }
 
-    @Composable
-    fun DeleteNoteBookDialog(openDialog: MutableState<Boolean>, notebook: NoteBook) {
-        if (openDialog.value) {
-            AlertDialog(
-                onDismissRequest = {
-                    openDialog.value = false
-                },
-                title = {
-                    Text(text = stringResource(id = R.string.delete_notebook))
-                },
-                text = {
-                    Text(stringResource(id = R.string.confirmation_delete_notebook))
-                },
-                confirmButton = {
-                    Button(onClick = {
-                        notebookViewModel.delete(notebook)
-                        openDialog.value = false
-                    }) {
-                        Text(text = stringResource(id = R.string.yes))
-                    }
-                },
-                dismissButton = {
-                    Button(onClick = {
-                        openDialog.value = false
-                    }) {
-                        Text(text = stringResource(id = R.string.no))
-                    }
-                }
-            )
-        }
-    }
-
-    @Composable
-    fun EditNoteBookDialog(openDialog: MutableState<Boolean>, notebook: NoteBook) {
-        if (openDialog.value) {
-            val notebookName = remember { mutableStateOf(TextFieldValue(notebook.titleNoteBook)) }
-            AlertDialog(
-                onDismissRequest = {
-                    openDialog.value = false
-                },
-                title = {
-                    Text(text = stringResource(id = R.string.edit_notebook_name))
-                },
-                text = {
-                    TextField(
-                        value = notebookName.value,
-                        onValueChange = { newText -> notebookName.value = newText })
-                },
-                confirmButton = {
-                    Button(onClick = {
+            // Edit dialog
+            AlertDialogUtil.ShowAlertDialog(
+                openDialog = openEditDialog,
+                title = stringResource(id = R.string.edit_notebook_name),
+                confirmText = stringResource(id = R.string.modify_notebook),
+                dismissText = stringResource(id = R.string.cancel),
+                onConfirmClick = { text, isError ->
+                    if (text.isEmpty() || text.length > 20) {
+                        isError.value = true
+                    } else {
                         notebookViewModel.update(
                             NoteBook(
-                                notebookName.value.text,
-                                dateCreation = notebook.dateCreation,
-                                idNotebook = notebook.idNotebook
+                                text,
+                                dateCreation = selectedNoteBook.value.dateCreation,
+                                idNotebook = selectedNoteBook.value.idNotebook
                             )
                         )
-                        openDialog.value = false
-                    }) {
-                        Text(text = stringResource(id = R.string.modify_notebook))
                     }
                 },
-                dismissButton = {
-                    Button(onClick = {
-                        openDialog.value = false
-                    }) {
-                        Text(text = stringResource(id = R.string.cancel))
-                    }
-                }
+                onErrorText = stringResource(id = R.string.message_size_error_message)
+            )
+
+           //Delete Notebook
+            AlertDialogUtil.ShowAlertDialog(
+                openDialog = openDeleteDialog,
+                title = stringResource(id = R.string.delete_notebook),
+                onConfirmClick = {_, _ -> notebookViewModel.delete(selectedNoteBook.value)},
+                isTextFieldValue = false
             )
         }
     }
