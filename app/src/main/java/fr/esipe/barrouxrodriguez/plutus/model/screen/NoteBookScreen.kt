@@ -3,7 +3,6 @@ package fr.esipe.barrouxrodriguez.plutus.model.screen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -16,8 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,10 +22,8 @@ import androidx.navigation.NavController
 import fr.esipe.barrouxrodriguez.plutus.R
 import fr.esipe.barrouxrodriguez.plutus.model.Converters
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBookWithTransactionsAndBudget
-import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
 import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
 import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
-import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
 
 class NoteBookScreen {
     private val notebookVM = notebookViewModel
@@ -45,9 +40,12 @@ class NoteBookScreen {
         Scaffold(
             topBar = {
                 TopAppBar(Modifier.fillMaxWidth()) {
-                    Column(Modifier.weight(1f / 3f, fill = true),
+                    Column(
+                        Modifier.weight(1f / 3f, fill = true),
                     ) {
-                        Button(modifier = Modifier.padding(10.dp), onClick = { navController.navigate("homepage_screen") })
+                        Button(
+                            modifier = Modifier.padding(10.dp),
+                            onClick = { navController.navigate("homepage_screen") })
                         {
                             Icon(
                                 Icons.Filled.ArrowBack,
@@ -56,7 +54,10 @@ class NoteBookScreen {
                         }
                     }
 
-                    Column(Modifier.fillMaxSize().weight(1f / 3f, fill = true),
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .weight(1f / 3f, fill = true),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -155,14 +156,20 @@ class NoteBookScreen {
                     LazyColumn {
                         noteBookWithLists.listTransaction.size.let { it ->
                             items(it) { i ->
-                                val transaction: TransactionWithNameTags = noteBookWithLists.listTransaction[i]
+                                val transaction: TransactionWithNameTags =
+                                    noteBookWithLists.listTransaction[i]
                                 Button(modifier = Modifier.padding(5.dp),
-                                    onClick = { navController.navigate("transaction_screen/$idNoteBook") }) {
+                                    onClick = { navController.navigate("transaction_screen/${transaction.transaction.idTransaction}") }) {
                                     Column {
                                         Text(text = transaction.transaction.title_transaction)
                                         // TODO - change it in strings.xml
                                         Text(text = "${transaction.transaction.amount_transaction} €")
-                                        Text(text = Converters.printDate(transaction.transaction.date_transaction, "yyyy-MM-dd"))
+                                        Text(
+                                            text = Converters.printDate(
+                                                transaction.transaction.date_transaction,
+                                                "yyyy-MM-dd"
+                                            )
+                                        )
                                     }
                                 }
                             }

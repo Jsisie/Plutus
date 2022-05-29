@@ -95,8 +95,8 @@ fun NavigationBasicsApp() {
             transactionScreen.AddNameTagToTransaction(navController, id?.toInt())
         }
 
-        composable("transaction_screen/{idNoteBook}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("idNoteBook")
+        composable("transaction_screen/{idTransaction}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("idTransaction")
             transactionScreen.TransactionScreen(navController, id?.toInt())
         }
 
