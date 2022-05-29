@@ -5,6 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class NameTag(
-    @PrimaryKey val titleNameTag: String,
+    val titleNameTag: String,
     val idTransaction: Int?,
+    val isPredefined: Boolean = false,
+    @PrimaryKey(autoGenerate = true) val idNameTag: Int = 0
 )

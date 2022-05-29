@@ -13,6 +13,9 @@ interface NameTagDao {
     @Query("SELECT * FROM NameTag")
     fun getAll(): LiveData<List<NameTag>>
 
+    @Query("SELECT * FROM NameTag WHERE isPredefined is 1")
+    fun getAllPredefined(): LiveData<List<NameTag>>
+
     @Insert(onConflict = REPLACE)
     suspend fun insertAll(vararg nameTag: NameTag)
 

@@ -17,13 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import fr.esipe.barrouxrodriguez.plutus.R
-import fr.esipe.barrouxrodriguez.plutus.model.AlertDialogUtil
+import fr.esipe.barrouxrodriguez.plutus.model.utils.AlertDialogUtil
 import fr.esipe.barrouxrodriguez.plutus.model.Converters
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
 import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
@@ -150,7 +149,7 @@ class HomePageScreen {
                         })
                 }
             }
-            
+
             // Add notebook
             AlertDialogUtil.ShowAlertDialog(
                 openDialog = openAddDialog,
@@ -181,6 +180,7 @@ class HomePageScreen {
                             NoteBook(
                                 text,
                                 dateCreation = selectedNoteBook.value.dateCreation,
+                                totalAmount = selectedNoteBook.value.totalAmount,
                                 idNotebook = selectedNoteBook.value.idNotebook
                             )
                         )
@@ -189,7 +189,7 @@ class HomePageScreen {
                 onErrorText = stringResource(id = R.string.message_size_error_message)
             )
 
-           //Delete Notebook
+            //Delete Notebook
             AlertDialogUtil.ShowAlertDialog(
                 openDialog = openDeleteDialog,
                 title = stringResource(id = R.string.delete_notebook),

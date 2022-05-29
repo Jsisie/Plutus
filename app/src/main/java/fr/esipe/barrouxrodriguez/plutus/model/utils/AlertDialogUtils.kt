@@ -1,4 +1,4 @@
-package fr.esipe.barrouxrodriguez.plutus.model
+package fr.esipe.barrouxrodriguez.plutus.model.utils
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column

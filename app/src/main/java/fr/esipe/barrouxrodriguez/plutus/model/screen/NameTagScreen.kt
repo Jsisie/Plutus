@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
 
 class NameTagScreen {
     @SuppressLint("NotConstructor")

@@ -53,6 +53,14 @@ class MainActivity : ComponentActivity() {
                             context.applicationContext as Application
                         )
                     )
+
+                    nameTagViewModel = viewModel(
+                        factory =
+                        NameTagViewModel.NameTagModelFactory(
+                            context.applicationContext as Application
+                        )
+                    )
+
                     NavigationBasicsApp()
                 }
             }
@@ -63,6 +71,7 @@ class MainActivity : ComponentActivity() {
 lateinit var ntViewModel: NameTagViewModel
 lateinit var transactionViewModel: TransactionViewModel
 lateinit var notebookViewModel: NoteBookViewModel
+lateinit var nameTagViewModel: NameTagViewModel
 
 @Composable
 fun NavigationBasicsApp() {
@@ -79,6 +88,11 @@ fun NavigationBasicsApp() {
         composable("notebook_screen/{idNoteBook}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("idNoteBook")
             noteBookScreen.NoteBookScreen(navController, id?.toInt())
+        }
+
+        composable("add_transaction_screen/{idNoteBook}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("idNoteBook")
+            transactionScreen.AddNameTagToTransaction(navController, id?.toInt())
         }
 
         composable("transaction_screen/{idNoteBook}") { backStackEntry ->

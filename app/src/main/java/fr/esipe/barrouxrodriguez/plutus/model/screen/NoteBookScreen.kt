@@ -29,7 +29,6 @@ import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
 import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
 
 class NoteBookScreen {
-
     private val notebookVM = notebookViewModel
 
     @SuppressLint("NotConstructor")
@@ -44,23 +43,18 @@ class NoteBookScreen {
         Scaffold(
             topBar = {
                 TopAppBar(Modifier.fillMaxWidth()) {
-                    Column(
-                        Modifier
-                            .weight(1f / 3f, fill = true),
+                    Column(Modifier.weight(1f / 3f, fill = true),
                     ) {
-                        Button(modifier = Modifier
-                            .padding(10.dp),
-                            onClick =
-                            { navController.navigate("homepage_screen") })
+                        Button(modifier = Modifier.padding(10.dp), onClick = { navController.navigate("homepage_screen") })
                         {
-                            Icon(Icons.Filled.ArrowBack,
-                                stringResource(id = R.string.create_notebook))
+                            Icon(
+                                Icons.Filled.ArrowBack,
+                                stringResource(id = R.string.create_notebook)
+                            )
                         }
                     }
-                    Column(
-                        Modifier
-                            .fillMaxSize()
-                            .weight(1f / 3f, fill = true),
+
+                    Column(Modifier.fillMaxSize().weight(1f / 3f, fill = true),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -70,17 +64,18 @@ class NoteBookScreen {
                             fontSize = 24.sp
                         )
                     }
-                    Column(Modifier.weight(1f / 3f, fill = true)) { }
+
+                    Spacer(Modifier.weight(1f / 3f))
                 }
             },
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
-                        openAddDialog.value = true
+                        navController.navigate("add_transaction_screen/$idNoteBook")
+                        // openAddDialog.value = true
                     },
                     // TODO - Move a little bit to the top the "Add" button
-//                    Modifier
-//                        .paddingFromBaseline(30.dp)
+                    // Modifier.paddingFromBaseline(30.dp)
                 )
                 {
                     Icon(Icons.Filled.Add, stringResource(id = R.string.create_transaction))
@@ -88,9 +83,10 @@ class NoteBookScreen {
             },
             isFloatingActionButtonDocked = true,
             bottomBar = {
-                BottomAppBar() {
-                    Column(modifier = Modifier
-                        .weight(1f / 2f, fill = true),
+                BottomAppBar {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f / 2f, fill = true),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -101,8 +97,9 @@ class NoteBookScreen {
                                 navController.navigate("notebook_screen/$idNoteBook")
                             }) { Text(stringResource(id = R.string.transaction)) }
                     }
-                    Column(modifier = Modifier
-                        .weight(1f / 2f, fill = true),
+                    Column(
+                        modifier = Modifier
+                            .weight(1f / 2f, fill = true),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -130,14 +127,18 @@ class NoteBookScreen {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     // TODO - change it in strings.xml
-                    text = "${noteBookWithLists.value?.noteBook?.totalAmount} €",
+                    text = "${
+                        noteBookWithLists.value?.listTransaction?.stream()
+                            ?.mapToInt { transaction -> transaction.transaction.amount_transaction }
+                            ?.sum()
+                    } €",
                     fontSize = 50.sp,
                     textAlign = TextAlign.Center
                 )
 
-
-                Text(stringResource(id = R.string.transaction),
-                    modifier =Modifier.fillMaxWidth(),
+                Text(
+                    stringResource(id = R.string.transaction),
+                    modifier = Modifier.fillMaxWidth(),
                     fontSize = 30.sp,
                     textAlign = TextAlign.Center
                 )
@@ -205,7 +206,8 @@ class NoteBookScreen {
                                 }
                             )
                             if (isError.value) {
-                                Text(stringResource(id = R.string.message_size_error_message),
+                                Text(
+                                    stringResource(id = R.string.message_size_error_message),
                                     color = MaterialTheme.colors.error,
                                     style = MaterialTheme.typography.caption,
                                     modifier = Modifier.padding(start = 16.dp)
@@ -227,7 +229,8 @@ class NoteBookScreen {
                                 }
                             )
                             if (isError.value) {
-                                Text(stringResource(id = R.string.message_size_error_message),
+                                Text(
+                                    stringResource(id = R.string.message_size_error_message),
                                     color = MaterialTheme.colors.error,
                                     style = MaterialTheme.typography.caption,
                                     modifier = Modifier.padding(start = 16.dp)
@@ -243,9 +246,13 @@ class NoteBookScreen {
                         if (text.isEmpty() || text.length > 20) {
                             isError.value = true
                         } else {
-                            transactionViewModel.insertAll(Transaction(title_transaction = text,
-                                amount_transaction = transactionAmount.value.text.toInt(),
-                                idNotebook = idNoteBook))
+                            transactionViewModel.insertAll(
+                                Transaction(
+                                    title_transaction = text,
+                                    amount_transaction = transactionAmount.value.text.toInt(),
+                                    idNotebook = idNoteBook
+                                )
+                            )
                             openAddDialog.value = false
                         }
                     }) {
