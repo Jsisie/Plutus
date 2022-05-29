@@ -26,5 +26,7 @@
     <string name="create_transaction">Créer une nouvelle transaction</string>
     <string name="budget">Budget</string>
     <string name="notebook_alreadyexists_error_message">Ce carnet de compte existe déjà, veuillez entrez un nom différent</string>
+    <string name="create_name_tag">Créer une nouvelle étiquette</string>
+    <string name="delete_name_tag">Supprimer une étiquette</string>
 
 </resources>

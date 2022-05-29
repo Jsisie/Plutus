@@ -1,19 +1,25 @@
 package fr.esipe.barrouxrodriguez.plutus.model.screen
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ExperimentalGraphicsApi
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -22,11 +28,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import fr.esipe.barrouxrodriguez.plutus.R
+import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
+import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
+import fr.esipe.barrouxrodriguez.plutus.model.utils.AlertDialogUtil
 import fr.esipe.barrouxrodriguez.plutus.nameTagViewModel
+import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
 
 class TransactionScreen {
 
-    @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+    @OptIn(
+        ExperimentalMaterialApi::class, ExperimentalFoundationApi::class,
+        ExperimentalGraphicsApi::class
+    )
     @SuppressLint("NotConstructor")
     @Composable
     fun AddNameTagToTransaction(navController: NavController, idNoteBook: Int?) {
@@ -42,12 +55,33 @@ class TransactionScreen {
         val nameTagList: MutableList<String> = remember {
             mutableStateListOf()
         }
+        val openNameTagDialog: MutableState<Boolean> = remember {
+            mutableStateOf(false)
+        }
+        val customTags = nameTagViewModel.readAllPredefined.observeAsState(emptyList()).value
+
+        val customTags2 = nameTagViewModel.readAllData.observeAsState(emptyList()).value
+        Log.d("aled", "$customTags\nall: $customTags2")
 
         Scaffold(
             topBar = {
                 TopAppBar(Modifier.fillMaxWidth()) {
+                    Box(Modifier.weight(1f / 5f, fill = true)) {
+                        Button(
+                            modifier = Modifier.padding(10.dp),
+                            onClick = { navController.navigate("notebook_screen/$idNoteBook") })
+                        {
+                            Icon(
+                                Icons.Filled.ArrowBack,
+                                stringResource(id = R.string.create_notebook)
+                            )
+                        }
+                    }
+
                     Column(
-                        Modifier.fillMaxSize(),
+                        Modifier
+                            .fillMaxSize()
+                            .weight(3f / 5f, fill = true),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -57,31 +91,66 @@ class TransactionScreen {
                             fontSize = 24.sp
                         )
                     }
-                    Column(
-                        Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.End,
-                        verticalArrangement = Arrangement.Center
-                    ) {
+
+                    Box(Modifier.weight(1f / 5f)) {
                         if (titleTransaction.value.text.isNotEmpty()) {
-                            Button(onClick = {
-                                // TODO Add transaction
-                            }) {
+                            Button(modifier = Modifier.padding(10.dp), onClick = {
+                                val transaction = idNoteBook?.let {
+                                    Transaction(
+                                        title_transaction = titleTransaction.value.text,
+                                        amount_transaction = Integer.parseInt(amountTransaction.value.text),
+                                        idNotebook = it
+                                    )
+                                }
+                                if (transaction != null) {
+                                    transactionViewModel.insertWithNameTags(
+                                        transaction,
+                                        nameTagList
+                                    )
+                                }
+                                navController.navigate("notebook_screen/$idNoteBook")
+                            })
+                            {
                                 Icon(
-                                    Icons.Filled.Add,
-                                    stringResource(id = R.string.create_transaction)
+                                    Icons.Filled.Check,
+                                    stringResource(id = R.string.create_notebook)
                                 )
                             }
                         }
                     }
                 }
+            },
+            floatingActionButton = {
+                FloatingActionButton(onClick = {
+                    openNameTagDialog.value = true
+                }) {
+                    Icon(Icons.Filled.Add, stringResource(id = R.string.create_name_tag))
+                }
+            },
+            bottomBar = {
+                BottomAppBar(
+                    // Defaults to null, that is, No cutout
+                    cutoutShape = MaterialTheme.shapes.small.copy(
+                        CornerSize(percent = 50)
+                    )
+                ) {
+
+                }
             }
-        ) { innerPadding ->
+        ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     // TODO - change it in strings.xml
-                    Text(text = "Title : ")
+                    Text(
+                        modifier = Modifier.weight(1 / 3f),
+                        text = "Title : ",
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.weight(1 / 8f))
                     TextField(
-                        modifier = Modifier.padding(3.dp),
+                        modifier = Modifier
+                            .padding(3.dp)
+                            .weight(5 / 6f),
                         value = titleTransaction.value,
                         onValueChange = { newText ->
                             isTitleError.value = false
@@ -99,11 +168,18 @@ class TransactionScreen {
                         )
                     }
                 }
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     // TODO - change it in strings.xml
-                    Text(text = "Amount : ")
+                    Text(
+                        modifier = Modifier.weight(1 / 3f),
+                        text = "Amount : ",
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.weight(1 / 8f))
                     TextField(
-                        modifier = Modifier.padding(3.dp),
+                        modifier = Modifier
+                            .padding(3.dp)
+                            .weight(5 / 6f),
                         value = amountTransaction.value,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         onValueChange = { newText ->
@@ -124,8 +200,9 @@ class TransactionScreen {
                 }
 
                 Box {
-                    Column() {
-                        Text(text = "Tags:")
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        //TODO string.xml
+                        Text(text = "Predefined Tags:", textAlign = TextAlign.Center)
                         LazyVerticalGrid(
                             cells = GridCells.Adaptive(150.dp)
                         ) {
@@ -140,7 +217,11 @@ class TransactionScreen {
                                             nameTagList.add(tag)
                                         }
                                     },
-                                    backgroundColor = if (selected) Color.Magenta else Color.LightGray,
+                                    backgroundColor = if (selected) Color(
+                                        67,
+                                        193,
+                                        215
+                                    ) else Color.LightGray,
                                     content = {
                                         Column(
                                             Modifier.fillMaxSize(),
@@ -156,8 +237,81 @@ class TransactionScreen {
                                     })
                             }
                         }
+
+                        Text(text = "Custom Tags:", textAlign = TextAlign.Center)
+                        LazyVerticalGrid(
+                            cells = GridCells.Adaptive(150.dp)
+                        ) {
+                            items(customTags.size) { i ->
+                                val tag = customTags[i]
+                                val selected = tag.titleNameTag in nameTagList
+                                Card(elevation = 5.dp, modifier = Modifier.padding(2.dp),
+                                    onClick = {
+                                        if (selected) {
+                                            nameTagList.remove(tag.titleNameTag)
+                                        } else {
+                                            nameTagList.add(tag.titleNameTag)
+                                        }
+                                    },
+                                    backgroundColor = if (selected) Color(
+                                        67,
+                                        193,
+                                        215
+                                    ) else Color.LightGray,
+                                    content = {
+                                        Column(
+                                            Modifier.fillMaxSize(),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Row(
+                                                Modifier.fillMaxSize(),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Text(
+                                                    modifier = Modifier
+                                                        .weight(4 / 6f)
+                                                        .fillMaxSize()
+                                                        .padding(5.dp),
+                                                    text = tag.titleNameTag,
+                                                    textAlign = TextAlign.Center,
+                                                    fontSize = 24.sp
+                                                )
+                                                Button(
+                                                    modifier = Modifier
+                                                        .weight(2 / 6f)
+                                                        .padding(10.dp),
+                                                    onClick = {
+                                                        nameTagViewModel.delete(tag)
+                                                    }) {
+                                                    Icon(
+                                                        Icons.Filled.Delete,
+                                                        stringResource(id = R.string.delete_notebook)
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    })
+                            }
+                        }
                     }
                 }
+
+                AlertDialogUtil.ShowAlertDialog(
+                    openDialog = openNameTagDialog,
+                    title = stringResource(id = R.string.create_name_tag),
+                    confirmText = stringResource(id = R.string.add),
+                    dismissText = stringResource(id = R.string.cancel),
+                    onConfirmClick = { text, isError ->
+                        if (text.isEmpty() || text.length > 20) {
+                            isError.value = true
+                        } else {
+                            val nameTag = NameTag(text, null)
+                            nameTagViewModel.insertAll(nameTag)
+                            Log.d("aled", "add nameTag: $nameTag")
+                        }
+                    }
+                )
             }
         }
     }

@@ -26,5 +26,7 @@
     <string name="create_transaction">Create new Transaction</string>
     <string name="budget">Budget</string>
     <string name="notebook_alreadyexists_error_message">NoteBook already existing, find an other name</string>
+    <string name="create_name_tag">Create Name Tag</string>
+    <string name="delete_name_tag">Delete NameTag</string>
 
 </resources>
