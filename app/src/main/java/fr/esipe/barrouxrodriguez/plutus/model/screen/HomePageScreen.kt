@@ -150,7 +150,7 @@ class HomePageScreen {
                         })
                 }
             }
-            
+
             // Add notebook
             AlertDialogUtil.ShowAlertDialog(
                 openDialog = openAddDialog,
@@ -181,6 +181,7 @@ class HomePageScreen {
                             NoteBook(
                                 text,
                                 dateCreation = selectedNoteBook.value.dateCreation,
+                                totalAmount = selectedNoteBook.value.totalAmount,
                                 idNotebook = selectedNoteBook.value.idNotebook
                             )
                         )
@@ -189,7 +190,7 @@ class HomePageScreen {
                 onErrorText = stringResource(id = R.string.message_size_error_message)
             )
 
-           //Delete Notebook
+            //Delete Notebook
             AlertDialogUtil.ShowAlertDialog(
                 openDialog = openDeleteDialog,
                 title = stringResource(id = R.string.delete_notebook),

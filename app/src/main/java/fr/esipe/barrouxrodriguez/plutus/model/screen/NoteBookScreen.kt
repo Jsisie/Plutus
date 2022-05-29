@@ -8,6 +8,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
@@ -15,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -22,14 +25,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import fr.esipe.barrouxrodriguez.plutus.*
 import fr.esipe.barrouxrodriguez.plutus.R
 import fr.esipe.barrouxrodriguez.plutus.model.Converters
 import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
-import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
-import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
 
 class NoteBookScreen {
-
     private val notebookVM = notebookViewModel
 
     @SuppressLint("NotConstructor")
@@ -53,8 +54,10 @@ class NoteBookScreen {
                             onClick =
                             { navController.navigate("homepage_screen") })
                         {
-                            Icon(Icons.Filled.ArrowBack,
-                                stringResource(id = R.string.create_notebook))
+                            Icon(
+                                Icons.Filled.ArrowBack,
+                                stringResource(id = R.string.create_notebook)
+                            )
                         }
                     }
                     Column(
@@ -76,7 +79,8 @@ class NoteBookScreen {
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
-                        openAddDialog.value = true
+                        navController.navigate("add_transaction_screen/$idNoteBook")
+                        //openAddDialog.value = true
                     },
                     // TODO - Move a little bit to the top the "Add" button
 //                    Modifier
@@ -89,8 +93,9 @@ class NoteBookScreen {
             isFloatingActionButtonDocked = true,
             bottomBar = {
                 BottomAppBar() {
-                    Column(modifier = Modifier
-                        .weight(1f / 2f, fill = true),
+                    Column(
+                        modifier = Modifier
+                            .weight(1f / 2f, fill = true),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -101,8 +106,9 @@ class NoteBookScreen {
                                 navController.navigate("notebook_screen/$idNoteBook")
                             }) { Text(stringResource(id = R.string.transaction)) }
                     }
-                    Column(modifier = Modifier
-                        .weight(1f / 2f, fill = true),
+                    Column(
+                        modifier = Modifier
+                            .weight(1f / 2f, fill = true),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -130,14 +136,18 @@ class NoteBookScreen {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     // TODO - change it in strings.xml
-                    text = "${noteBookWithLists.value?.noteBook?.totalAmount} €",
+                    text = "${
+                        noteBookWithLists.value?.listTransaction?.stream()
+                            ?.mapToInt { transaction -> transaction.transaction.amount_transaction }
+                            ?.sum()
+                    } €",
                     fontSize = 50.sp,
                     textAlign = TextAlign.Center
                 )
 
-
-                Text(stringResource(id = R.string.transaction),
-                    modifier =Modifier.fillMaxWidth(),
+                Text(
+                    stringResource(id = R.string.transaction),
+                    modifier = Modifier.fillMaxWidth(),
                     fontSize = 30.sp,
                     textAlign = TextAlign.Center
                 )
@@ -205,7 +215,8 @@ class NoteBookScreen {
                                 }
                             )
                             if (isError.value) {
-                                Text(stringResource(id = R.string.message_size_error_message),
+                                Text(
+                                    stringResource(id = R.string.message_size_error_message),
                                     color = MaterialTheme.colors.error,
                                     style = MaterialTheme.typography.caption,
                                     modifier = Modifier.padding(start = 16.dp)
@@ -227,7 +238,8 @@ class NoteBookScreen {
                                 }
                             )
                             if (isError.value) {
-                                Text(stringResource(id = R.string.message_size_error_message),
+                                Text(
+                                    stringResource(id = R.string.message_size_error_message),
                                     color = MaterialTheme.colors.error,
                                     style = MaterialTheme.typography.caption,
                                     modifier = Modifier.padding(start = 16.dp)
@@ -243,9 +255,13 @@ class NoteBookScreen {
                         if (text.isEmpty() || text.length > 20) {
                             isError.value = true
                         } else {
-                            transactionViewModel.insertAll(Transaction(title_transaction = text,
-                                amount_transaction = transactionAmount.value.text.toInt(),
-                                idNotebook = idNoteBook))
+                            transactionViewModel.insertAll(
+                                Transaction(
+                                    title_transaction = text,
+                                    amount_transaction = transactionAmount.value.text.toInt(),
+                                    idNotebook = idNoteBook
+                                )
+                            )
                             openAddDialog.value = false
                         }
                     }) {
