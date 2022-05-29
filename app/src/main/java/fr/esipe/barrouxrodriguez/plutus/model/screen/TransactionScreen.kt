@@ -60,9 +60,6 @@ class TransactionScreen {
         }
         val customTags = nameTagViewModel.readAllPredefined.observeAsState(emptyList()).value
 
-        val customTags2 = nameTagViewModel.readAllData.observeAsState(emptyList()).value
-        Log.d("aled", "$customTags\nall: $customTags2")
-
         Scaffold(
             topBar = {
                 TopAppBar(Modifier.fillMaxWidth()) {
@@ -306,7 +303,7 @@ class TransactionScreen {
                         if (text.isEmpty() || text.length > 20) {
                             isError.value = true
                         } else {
-                            val nameTag = NameTag(text, null)
+                            val nameTag = NameTag(text, null, true)
                             nameTagViewModel.insertAll(nameTag)
                             Log.d("aled", "add nameTag: $nameTag")
                         }
