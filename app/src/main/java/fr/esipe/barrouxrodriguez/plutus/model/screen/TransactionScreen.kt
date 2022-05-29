@@ -1,7 +1,9 @@
 package fr.esipe.barrouxrodriguez.plutus.model.screen
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.util.Log
+import android.widget.DatePicker
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
@@ -20,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ExperimentalGraphicsApi
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -33,6 +36,7 @@ import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
 import fr.esipe.barrouxrodriguez.plutus.model.utils.AlertDialogUtil
 import fr.esipe.barrouxrodriguez.plutus.nameTagViewModel
 import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
+import java.util.*
 
 class TransactionScreen {
 
@@ -59,6 +63,32 @@ class TransactionScreen {
             mutableStateOf(false)
         }
         val customTags = nameTagViewModel.readAllPredefined.observeAsState(emptyList()).value
+
+        val year: Int
+        val month: Int
+        val day: Int
+
+        val calendar = Calendar.getInstance()
+
+        year = calendar.get(Calendar.YEAR)
+        month = calendar.get(Calendar.MONTH)
+        day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        calendar.time = Date()
+
+
+        // Declaring a string value to
+        // store date in string format
+        val date = remember { mutableStateOf("Pick a Date") }
+
+        // Declaring DatePickerDialog and setting
+        // initial values as current values (present year, month and day)
+        val mDatePickerDialog = DatePickerDialog(
+            LocalContext.current,
+            { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
+                date.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
+            }, year, month, day
+        )
 
         Scaffold(
             topBar = {
@@ -90,12 +120,15 @@ class TransactionScreen {
                     }
 
                     Box(Modifier.weight(1f / 5f)) {
-                        if (titleTransaction.value.text.isNotEmpty()) {
+                        if (titleTransaction.value.text.isNotEmpty() && amountTransaction.value.text.isNotEmpty() && date.value != "Pick a Date") {
                             Button(modifier = Modifier.padding(10.dp), onClick = {
+                                calendar.set(year, month, day)
+                                Log.d("aled", "$calendar.time")
                                 val transaction = idNoteBook?.let {
                                     Transaction(
                                         title_transaction = titleTransaction.value.text,
                                         amount_transaction = Integer.parseInt(amountTransaction.value.text),
+                                        date_transaction = calendar.time,
                                         idNotebook = it
                                     )
                                 }
@@ -194,6 +227,21 @@ class TransactionScreen {
                             modifier = Modifier.padding(start = 16.dp)
                         )
                     }
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // TODO - change it in strings.xml
+                    Text(
+                        modifier = Modifier.weight(1 / 5f),
+                        text = "Date : ",
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.weight(1 / 5f))
+                    Button(modifier = Modifier.weight(2 / 5f), onClick = {
+                        mDatePickerDialog.show()
+                    }, colors = ButtonDefaults.buttonColors(backgroundColor = Color(0XFF0F9D58))) {
+                        Text(text = date.value, color = Color.White)
+                    }
+                    Spacer(modifier = Modifier.weight(1 / 5f))
                 }
 
                 Box {
@@ -305,7 +353,6 @@ class TransactionScreen {
                         } else {
                             val nameTag = NameTag(text, null, true)
                             nameTagViewModel.insertAll(nameTag)
-                            Log.d("aled", "add nameTag: $nameTag")
                         }
                     }
                 )

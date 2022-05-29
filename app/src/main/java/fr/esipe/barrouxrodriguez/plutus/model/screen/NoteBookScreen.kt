@@ -24,7 +24,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import fr.esipe.barrouxrodriguez.plutus.R
 import fr.esipe.barrouxrodriguez.plutus.model.Converters
+import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBookWithTransactionsAndBudget
 import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
+import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
 import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
 import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
 
@@ -36,8 +38,8 @@ class NoteBookScreen {
     fun NoteBookScreen(navController: NavController, idNoteBook: Int?) {
         val openAddDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
 
-        val noteBookWithLists = idNoteBook?.let {
-            notebookVM.findNoteBookById(it).observeAsState()
+        val noteBookWithLists: NoteBookWithTransactionsAndBudget = idNoteBook?.let {
+            notebookVM.findNoteBookById(it).observeAsState().value
         } ?: return
 
         Scaffold(
@@ -59,7 +61,7 @@ class NoteBookScreen {
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "${noteBookWithLists.value?.noteBook?.titleNoteBook}",
+                            text = noteBookWithLists.noteBook.titleNoteBook,
                             textAlign = TextAlign.Center,
                             fontSize = 24.sp
                         )
@@ -114,7 +116,7 @@ class NoteBookScreen {
         ) { innerPadding ->
             Column(Modifier.padding(innerPadding)) {
                 Text("${stringResource(id = R.string.creation_date)} : ${
-                    noteBookWithLists.value?.noteBook?.dateCreation?.let { it1 ->
+                    noteBookWithLists.noteBook.dateCreation?.let { it1 ->
                         Converters.printDate(
                             it1, "yyyy-MM-dd"
                         )
@@ -128,8 +130,8 @@ class NoteBookScreen {
                     modifier = Modifier.fillMaxWidth(),
                     // TODO - change it in strings.xml
                     text = "${
-                        noteBookWithLists.value?.listTransaction?.stream()
-                            ?.mapToInt { transaction -> transaction.transaction.amount_transaction }
+                        noteBookWithLists.listTransaction.stream()
+                            .mapToInt { transaction -> transaction.transaction.amount_transaction }
                             ?.sum()
                     } €",
                     fontSize = 50.sp,
@@ -151,122 +153,23 @@ class NoteBookScreen {
                 )
                 {
                     LazyColumn {
-                        noteBookWithLists.value?.listTransaction?.size?.let { it1 ->
-                            items(it1) { i ->
-                                // TODO - Could be implemented better
-                                val transactionList = (i + 1).let {
-                                    transactionViewModel.findTransactionsById(it).observeAsState()
-                                }
-//                                val transaction = transactionViewModel.findTransactionsById(i)
+                        noteBookWithLists.listTransaction.size.let { it ->
+                            items(it) { i ->
+                                val transaction: TransactionWithNameTags = noteBookWithLists.listTransaction[i]
                                 Button(modifier = Modifier.padding(5.dp),
                                     onClick = { navController.navigate("transaction_screen/$idNoteBook") }) {
                                     Column {
-                                        Text(text = "${transactionList.value?.transaction?.title_transaction}")
+                                        Text(text = transaction.transaction.title_transaction)
                                         // TODO - change it in strings.xml
-                                        Text(text = "${transactionList.value?.transaction?.amount_transaction} €")
+                                        Text(text = "${transaction.transaction.amount_transaction} €")
+                                        Text(text = Converters.printDate(transaction.transaction.date_transaction, "yyyy-MM-dd"))
                                     }
-//                                    Text(text = "${transaction.value?.transaction?.title_transaction}")
                                 }
                             }
                         }
                     }
                 }
             }
-        }
-        AddTransactionDialog(openAddDialog, idNoteBook)
-    }
-
-    @Composable
-    fun AddTransactionDialog(openAddDialog: MutableState<Boolean>, idNoteBook: Int) {
-        if (openAddDialog.value) {
-            val transactionName = remember { mutableStateOf(TextFieldValue("")) }
-            val transactionAmount = remember { mutableStateOf(TextFieldValue("")) }
-            val isError = remember { mutableStateOf(false) }
-
-            AlertDialog(
-                onDismissRequest = {
-                    openAddDialog.value = false
-                },
-                title = {
-                    Text(stringResource(id = R.string.add_transaction))
-                },
-                text = {
-                    Column {
-                        Row {
-                            // TODO - change it in strings.xml
-                            Text(text = "Title : ")
-                            TextField(
-                                modifier = Modifier.padding(3.dp),
-                                value = transactionName.value,
-                                onValueChange = { newText ->
-                                    isError.value = false
-                                    if (transactionName.value.text.length < 25) {
-                                        transactionName.value = newText
-                                    }
-                                }
-                            )
-                            if (isError.value) {
-                                Text(
-                                    stringResource(id = R.string.message_size_error_message),
-                                    color = MaterialTheme.colors.error,
-                                    style = MaterialTheme.typography.caption,
-                                    modifier = Modifier.padding(start = 16.dp)
-                                )
-                            }
-                        }
-                        Row {
-                            // TODO - change it in strings.xml
-                            Text(text = "Amount : ")
-                            TextField(
-                                modifier = Modifier.padding(3.dp),
-                                value = transactionAmount.value,
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                onValueChange = { newText ->
-                                    isError.value = false
-                                    if (transactionAmount.value.text.length < 25) {
-                                        transactionAmount.value = newText
-                                    }
-                                }
-                            )
-                            if (isError.value) {
-                                Text(
-                                    stringResource(id = R.string.message_size_error_message),
-                                    color = MaterialTheme.colors.error,
-                                    style = MaterialTheme.typography.caption,
-                                    modifier = Modifier.padding(start = 16.dp)
-                                )
-                            }
-                        }
-//                        }
-                    }
-                },
-                confirmButton = {
-                    Button(onClick = {
-                        val text = transactionName.value.text
-                        if (text.isEmpty() || text.length > 20) {
-                            isError.value = true
-                        } else {
-                            transactionViewModel.insertAll(
-                                Transaction(
-                                    title_transaction = text,
-                                    amount_transaction = transactionAmount.value.text.toInt(),
-                                    idNotebook = idNoteBook
-                                )
-                            )
-                            openAddDialog.value = false
-                        }
-                    }) {
-                        Text(text = stringResource(id = R.string.add))
-                    }
-                },
-                dismissButton = {
-                    Button(onClick = {
-                        openAddDialog.value = false
-                    }) {
-                        Text(text = stringResource(id = R.string.cancel))
-                    }
-                }
-            )
         }
     }
 }
