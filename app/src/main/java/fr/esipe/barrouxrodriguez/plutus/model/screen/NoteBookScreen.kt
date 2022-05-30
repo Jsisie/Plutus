@@ -1,9 +1,9 @@
 package fr.esipe.barrouxrodriguez.plutus.model.screen
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -25,7 +25,6 @@ import fr.esipe.barrouxrodriguez.plutus.R
 import fr.esipe.barrouxrodriguez.plutus.model.Converters
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBookWithTransactionsAndBudget
 import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
-import fr.esipe.barrouxrodriguez.plutus.nameTagViewModel
 import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
 import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
 
@@ -90,7 +89,10 @@ class NoteBookScreen {
             },
             isFloatingActionButtonDocked = true,
             bottomBar = {
-                BottomAppBar {
+
+                BottomAppBar(
+                    cutoutShape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50))
+                ) {
                     Column(
                         modifier = Modifier
                             .weight(1f / 2f, fill = true),
@@ -166,11 +168,19 @@ class NoteBookScreen {
                                         Text(text = transaction.transaction.title_transaction)
                                         // TODO - change it in strings.xml
                                         Text(text = "${transaction.transaction.amount_transaction} €")
-                                        Text(text = Converters.printDate(transaction.transaction.date_transaction, "yyyy-MM-dd"))
+                                        Text(
+                                            text = Converters.printDate(
+                                                transaction.transaction.date_transaction,
+                                                "yyyy-MM-dd"
+                                            )
+                                        )
                                         Button(onClick = {
                                             transactionViewModel.delete(transaction)
                                         }) {
-                                            Icon(Icons.Filled.Delete, contentDescription = "yeetusDeletusTransactius")
+                                            Icon(
+                                                Icons.Filled.Delete,
+                                                contentDescription = "yeetusDeletusTransactius"
+                                            )
                                         }
                                     }
                                 }

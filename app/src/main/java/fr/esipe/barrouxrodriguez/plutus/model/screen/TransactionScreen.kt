@@ -8,8 +8,11 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -86,7 +89,14 @@ class TransactionScreen {
 
         // Declaring a string value to
         // store date in string format
-        val date = remember { mutableStateOf(Converters.printDate(calendar.time, "yyyy-MM-dd")) }        // Declaring DatePickerDialog and setting
+        val date = remember {
+            mutableStateOf(
+                Converters.printDate(
+                    calendar.time,
+                    "yyyy-MM-dd"
+                )
+            )
+        }        // Declaring DatePickerDialog and setting
         // initial values as current values (present year, month and day)
         val mDatePickerDialog = DatePickerDialog(
             LocalContext.current,
@@ -130,9 +140,7 @@ class TransactionScreen {
                     Box(Modifier.weight(1f / 5f)) {
                         if (titleTransaction.value.text.isNotEmpty() && amountTransaction.value.text.isNotEmpty() && date.value != "Pick a Date") {
                             Button(modifier = Modifier.padding(10.dp), onClick = {
-                                Log.d("nt", "$year $month $day")
                                 calendar.set(year, month, day)
-                                Log.d("aled", "$calendar.time")
                                 val transaction = idNoteBook?.let {
                                     Transaction(
                                         title_transaction = titleTransaction.value.text,
@@ -196,8 +204,7 @@ class TransactionScreen {
                         LazyVerticalGrid(
                             cells = GridCells.Adaptive(150.dp)
                         ) {
-                            items(nameTagViewModel.predefTags.size) { i ->
-                                val tag = nameTagViewModel.predefTags[i]
+                            items(nameTagViewModel.predefTags.sorted()) { tag ->
                                 val selected = tag in nameTagList
                                 Card(elevation = 5.dp, modifier = Modifier.padding(2.dp),
                                     onClick = {
@@ -228,12 +235,14 @@ class TransactionScreen {
                             }
                         }
 
+
+                        "".isNotEmpty()
+
                         Text(text = "Custom Tags:", textAlign = TextAlign.Center)
                         LazyVerticalGrid(
                             cells = GridCells.Adaptive(150.dp)
                         ) {
-                            items(customTags.size) { i ->
-                                val tag = customTags[i]
+                            items(customTags.sorted()) { tag ->
                                 val selected = tag.titleNameTag in nameTagList
                                 Card(elevation = 5.dp, modifier = Modifier.padding(2.dp),
                                     onClick = {
@@ -420,7 +429,7 @@ class TransactionScreen {
 
         val transaction = transactionWithNameTags.transaction
 
-        val idNoteBook = transaction.idNotebook;
+        val idNoteBook = transaction.idNotebook
 
         val titleTransaction: MutableState<TextFieldValue> = remember {
             mutableStateOf(
@@ -437,16 +446,13 @@ class TransactionScreen {
         val isTitleError: MutableState<Boolean> = remember { mutableStateOf(false) }
         val isAmountError: MutableState<Boolean> = remember { mutableStateOf(false) }
 
-        val nameTagList: MutableList<String> = remember {
-            mutableStateListOf()
+        val nameTagMap: MutableMap<NameTag, NameTag> = remember {
+            mutableStateMapOf()
         }
 
         // FIXME Will create bug if remove every nameTag
-        if(nameTagList.isEmpty()) {
-            nameTagList.addAll(
-                transactionWithNameTags.nameTags.stream().map { nameTag -> nameTag.titleNameTag }
-                    .toList()
-            )
+        if (nameTagMap.isEmpty()) {
+            transactionWithNameTags.nameTags.forEach { nameTag -> nameTagMap[nameTag] = nameTag }
         }
 
         val openNameTagDialog: MutableState<Boolean> = remember {
@@ -548,6 +554,7 @@ class TransactionScreen {
                     Icon(Icons.Filled.Add, stringResource(id = R.string.create_name_tag))
                 }
             },
+            isFloatingActionButtonDocked = true,
             bottomBar = {
                 BottomAppBar(
                     // Defaults to null, that is, No cutout
@@ -572,16 +579,14 @@ class TransactionScreen {
                 Box {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         //TODO string.xml
-                        Text(text = "Predefined Tags:", textAlign = TextAlign.Center)
+                        Text(text = "Tags of the transaction:", textAlign = TextAlign.Center)
                         LazyVerticalGrid(
                             cells = GridCells.Adaptive(150.dp)
                         ) {
-                            Log.d("aled", "${nameTagList.size}")
-                            items(nameTagList.size) { i ->
-                                val tag = nameTagList[i]
+                            items(nameTagMap.keys.stream().sorted().toList()) { tag ->
                                 Card(elevation = 5.dp, modifier = Modifier.padding(2.dp),
                                     onClick = {
-                                        /* TODO remove the card, change list to set*/
+                                        nameTagMap.remove(tag)
                                     },
                                     backgroundColor = Color.LightGray,
                                     content = {
@@ -591,7 +596,7 @@ class TransactionScreen {
                                             verticalArrangement = Arrangement.Center
                                         ) {
                                             Text(
-                                                text = tag,
+                                                text = tag.titleNameTag,
                                                 textAlign = TextAlign.Center,
                                                 fontSize = 24.sp
                                             )
@@ -599,28 +604,20 @@ class TransactionScreen {
                                     })
                             }
                         }
-                        /*
+
                         //TODO string.xml
                         Text(text = "Predefined Tags:", textAlign = TextAlign.Center)
                         LazyVerticalGrid(
                             cells = GridCells.Adaptive(150.dp)
                         ) {
-                            items(nameTagViewModel.predefTags.size) { i ->
-                                val tag = nameTagViewModel.predefTags[i]
-                                val selected = tag in nameTagList
+                            items(nameTagViewModel.predefTags) { tag ->
                                 Card(elevation = 5.dp, modifier = Modifier.padding(2.dp),
                                     onClick = {
-                                        if (selected) {
-                                            nameTagList.remove(tag)
-                                        } else {
-                                            nameTagList.add(tag)
-                                        }
+                                        val newTag =
+                                            NameTag(tag, transaction.idTransaction)
+                                        nameTagMap[newTag] = newTag
                                     },
-                                    backgroundColor = if (selected) Color(
-                                        67,
-                                        193,
-                                        215
-                                    ) else Color.LightGray,
+                                    backgroundColor = Color.LightGray,
                                     content = {
                                         Column(
                                             Modifier.fillMaxSize(),
@@ -643,20 +640,13 @@ class TransactionScreen {
                         ) {
                             items(customTags.size) { i ->
                                 val tag = customTags[i]
-                                val selected = tag.titleNameTag in nameTagList
                                 Card(elevation = 5.dp, modifier = Modifier.padding(2.dp),
                                     onClick = {
-                                        if (selected) {
-                                            nameTagList.remove(tag.titleNameTag)
-                                        } else {
-                                            nameTagList.add(tag.titleNameTag)
-                                        }
+                                        val newTag =
+                                            NameTag(tag.titleNameTag, transaction.idTransaction)
+                                        nameTagMap[newTag] = newTag
                                     },
-                                    backgroundColor = if (selected) Color(
-                                        67,
-                                        193,
-                                        215
-                                    ) else Color.LightGray,
+                                    backgroundColor = Color.LightGray,
                                     content = {
                                         Column(
                                             Modifier.fillMaxSize(),
@@ -694,25 +684,25 @@ class TransactionScreen {
                             }
                         }
                     }
-                    */
-                    }
 
-                    AlertDialogUtil.ShowAlertDialog(
-                        openDialog = openNameTagDialog,
-                        title = stringResource(id = R.string.create_name_tag),
-                        confirmText = stringResource(id = R.string.add),
-                        dismissText = stringResource(id = R.string.cancel),
-                        onConfirmClick = { text, isError ->
-                            if (text.isEmpty() || text.length > 20) {
-                                isError.value = true
-                            } else {
-                                val nameTag = NameTag(text, null, true)
-                                nameTagViewModel.insertAll(nameTag)
-                            }
-                        }
-                    )
                 }
+
+                AlertDialogUtil.ShowAlertDialog(
+                    openDialog = openNameTagDialog,
+                    title = stringResource(id = R.string.create_name_tag),
+                    confirmText = stringResource(id = R.string.add),
+                    dismissText = stringResource(id = R.string.cancel),
+                    onConfirmClick = { text, isError ->
+                        if (text.isEmpty() || text.length > 20) {
+                            isError.value = true
+                        } else {
+                            val nameTag = NameTag(text, null, true)
+                            nameTagViewModel.insertAll(nameTag)
+                        }
+                    }
+                )
             }
         }
     }
 }
+

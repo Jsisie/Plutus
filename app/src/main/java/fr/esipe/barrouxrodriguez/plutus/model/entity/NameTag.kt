@@ -19,4 +19,29 @@ data class NameTag(
     val idTransaction: Int?,
     val isPredefined: Boolean = false,
     @PrimaryKey(autoGenerate = true) val idNameTag: Int = 0
-)
+) : Comparable<NameTag> {
+    override fun compareTo(other: NameTag): Int {
+        return titleNameTag.compareTo(other.titleNameTag)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as NameTag
+
+        if (titleNameTag != other.titleNameTag) return false
+        if (idTransaction != other.idTransaction) return false
+        if (isPredefined != other.isPredefined) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = titleNameTag.hashCode()
+        result = 31 * result + (idTransaction ?: 0)
+        result = 31 * result + isPredefined.hashCode()
+        return result
+    }
+
+}
