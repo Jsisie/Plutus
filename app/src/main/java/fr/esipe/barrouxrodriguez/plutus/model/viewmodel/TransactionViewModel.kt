@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlin.streams.toList
 
 class TransactionViewModel(application: Application) : AndroidViewModel(application) {
-    private val readAllData: LiveData<List<TransactionWithNameTags>>
+    val readAllData: LiveData<List<TransactionWithNameTags>>
     private val transactionDao: TransactionDao =
         NoteBookDatabase.getInstance(application).TransactionDao()
     private val nameTagDao: NameTagDao = NoteBookDatabase.getInstance(application).NameTagDao()

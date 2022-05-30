@@ -1,6 +1,7 @@
 package fr.esipe.barrouxrodriguez.plutus.model.screen
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
@@ -8,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
@@ -27,6 +29,7 @@ import fr.esipe.barrouxrodriguez.plutus.model.Converters
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBookWithTransactionsAndBudget
 import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
 import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
+import fr.esipe.barrouxrodriguez.plutus.nameTagViewModel
 import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
 import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
 
@@ -42,6 +45,9 @@ class NoteBookScreen {
             notebookVM.findNoteBookById(it).observeAsState().value
         } ?: return
 
+        val bob = nameTagViewModel.readAllData.observeAsState().value
+        val bob2 = transactionViewModel.readAllData.observeAsState().value
+
         Scaffold(
             topBar = {
                 TopAppBar(Modifier.fillMaxWidth()) {
@@ -56,7 +62,10 @@ class NoteBookScreen {
                         }
                     }
 
-                    Column(Modifier.fillMaxSize().weight(1f / 3f, fill = true),
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .weight(1f / 3f, fill = true),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -129,11 +138,9 @@ class NoteBookScreen {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     // TODO - change it in strings.xml
-                    text = "${
-                        noteBookWithLists.listTransaction.stream()
-                            .mapToInt { transaction -> transaction.transaction.amount_transaction }
-                            ?.sum()
-                    } €",
+                    text = String.format("%.2f €", noteBookWithLists.listTransaction.stream()
+                        .mapToDouble { transaction -> transaction.transaction.amount_transaction.toDouble() }
+                        ?.sum()?.toFloat()),
                     fontSize = 50.sp,
                     textAlign = TextAlign.Center
                 )
@@ -163,6 +170,11 @@ class NoteBookScreen {
                                         // TODO - change it in strings.xml
                                         Text(text = "${transaction.transaction.amount_transaction} €")
                                         Text(text = Converters.printDate(transaction.transaction.date_transaction, "yyyy-MM-dd"))
+                                        Button(onClick = {
+                                            transactionViewModel.delete(transaction)
+                                        }) {
+                                            Icon(Icons.Filled.Delete, contentDescription = "yeetusDeletusTransactius")
+                                        }
                                     }
                                 }
                             }

@@ -2,6 +2,7 @@ package fr.esipe.barrouxrodriguez.plutus
 
 import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,7 +33,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val context = LocalContext.current
-
+                    Log.d("aled", "aled")
                     ntViewModel = viewModel(
                         factory =
                         NameTagViewModel.NameTagModelFactory(

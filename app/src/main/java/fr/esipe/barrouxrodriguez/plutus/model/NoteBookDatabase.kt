@@ -43,7 +43,7 @@ abstract class NoteBookDatabase : RoomDatabase() {
 
             return Room.databaseBuilder(
                 context.applicationContext,
-                NoteBookDatabase::class.java, "notebook-db44"
+                NoteBookDatabase::class.java, "notebook-db45"
             ).build()
         }
     }
