@@ -55,6 +55,11 @@ class TransactionScreen {
                 TextFieldValue("")
             )
         }
+        val descriptionTransaction: MutableState<TextFieldValue> = remember {
+            mutableStateOf(
+                TextFieldValue("")
+            )
+        }
         val amountTransaction: MutableState<TextFieldValue> =
             remember { mutableStateOf(TextFieldValue("")) }
         val isTitleError: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -81,9 +86,7 @@ class TransactionScreen {
 
         // Declaring a string value to
         // store date in string format
-        val date = remember { mutableStateOf(Converters.printDate(calendar.time, "yyyy-MM-dd")) }
-
-        // Declaring DatePickerDialog and setting
+        val date = remember { mutableStateOf(Converters.printDate(calendar.time, "yyyy-MM-dd")) }        // Declaring DatePickerDialog and setting
         // initial values as current values (present year, month and day)
         val mDatePickerDialog = DatePickerDialog(
             LocalContext.current,
@@ -135,6 +138,7 @@ class TransactionScreen {
                                         title_transaction = titleTransaction.value.text,
                                         amount_transaction = amountTransaction.value.text.toFloat(),
                                         date_transaction = calendar.time,
+                                        description_transaction = descriptionTransaction.value.text,
                                         idNotebook = it
                                     )
                                 }
@@ -175,80 +179,15 @@ class TransactionScreen {
             }
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // TODO - change it in strings.xml
-                    Text(
-                        modifier = Modifier.weight(1 / 3f),
-                        text = "Title : ",
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.weight(1 / 8f))
-                    TextField(
-                        modifier = Modifier
-                            .padding(3.dp)
-                            .weight(5 / 6f),
-                        value = titleTransaction.value,
-                        onValueChange = { newText ->
-                            isTitleError.value = false
-                            if (titleTransaction.value.text.length < 25) {
-                                titleTransaction.value = newText
-                            }
-                        }
-                    )
-                    if (isTitleError.value) {
-                        Text(
-                            stringResource(id = R.string.message_size_error_message),
-                            color = MaterialTheme.colors.error,
-                            style = MaterialTheme.typography.caption,
-                            modifier = Modifier.padding(start = 16.dp)
-                        )
-                    }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // TODO - change it in strings.xml
-                    Text(
-                        modifier = Modifier.weight(1 / 3f),
-                        text = "Amount : ",
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.weight(1 / 8f))
-                    TextField(
-                        modifier = Modifier
-                            .padding(3.dp)
-                            .weight(5 / 6f),
-                        value = amountTransaction.value,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        onValueChange = { newText ->
-                            isAmountError.value = false
-                            if (amountTransaction.value.text.length < 25) {
-                                amountTransaction.value = newText
-                            }
-                        }
-                    )
-                    if (isAmountError.value) {
-                        Text(
-                            stringResource(id = R.string.message_size_error_message),
-                            color = MaterialTheme.colors.error,
-                            style = MaterialTheme.typography.caption,
-                            modifier = Modifier.padding(start = 16.dp)
-                        )
-                    }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // TODO - change it in strings.xml
-                    Text(
-                        modifier = Modifier.weight(1 / 5f),
-                        text = "Date : ",
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.weight(1 / 5f))
-                    Button(modifier = Modifier.weight(2 / 5f), onClick = {
-                        mDatePickerDialog.show()
-                    }, colors = ButtonDefaults.buttonColors(backgroundColor = Color(0XFF0F9D58))) {
-                        Text(text = date.value, color = Color.White)
-                    }
-                    Spacer(modifier = Modifier.weight(1 / 5f))
-                }
+                ShowTransactionContent(
+                    titleTransaction,
+                    isTitleError,
+                    amountTransaction,
+                    descriptionTransaction,
+                    isAmountError,
+                    mDatePickerDialog,
+                    date
+                )
 
                 Box {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -366,6 +305,110 @@ class TransactionScreen {
         }
     }
 
+    @Composable
+    private fun ShowTransactionContent(
+        titleTransaction: MutableState<TextFieldValue>,
+        isTitleError: MutableState<Boolean>,
+        amountTransaction: MutableState<TextFieldValue>,
+        descriptionTransaction: MutableState<TextFieldValue>,
+        isAmountError: MutableState<Boolean>,
+        mDatePickerDialog: DatePickerDialog,
+        date: MutableState<String>
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            // TODO - change it in strings.xml
+            Text(
+                modifier = Modifier.weight(1 / 3f),
+                text = "Title : ",
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.weight(1 / 8f))
+            TextField(
+                modifier = Modifier
+                    .padding(3.dp)
+                    .weight(5 / 6f),
+                value = titleTransaction.value,
+                onValueChange = { newText ->
+                    isTitleError.value = false
+                    if (titleTransaction.value.text.length < 25) {
+                        titleTransaction.value = newText
+                    }
+                }
+            )
+            if (isTitleError.value) {
+                Text(
+                    stringResource(id = R.string.message_size_error_message),
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            // TODO - change it in strings.xml
+            Text(
+                modifier = Modifier.weight(1 / 3f),
+                text = "Amount : ",
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.weight(1 / 8f))
+            TextField(
+                modifier = Modifier
+                    .padding(3.dp)
+                    .weight(5 / 6f),
+                value = amountTransaction.value,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                onValueChange = { newText ->
+                    isAmountError.value = false
+                    if (amountTransaction.value.text.length < 25) {
+                        amountTransaction.value = newText
+                    }
+                }
+            )
+            if (isAmountError.value) {
+                Text(
+                    stringResource(id = R.string.message_size_error_message),
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            // TODO - change it in strings.xml
+            Text(
+                modifier = Modifier.weight(1 / 3f),
+                text = "Description : ",
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.weight(1 / 8f))
+            TextField(
+                modifier = Modifier
+                    .padding(3.dp)
+                    .weight(5 / 6f),
+                value = descriptionTransaction.value,
+                onValueChange = { newText ->
+                    descriptionTransaction.value = newText
+                }
+            )
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            // TODO - change it in strings.xml
+            Text(
+                modifier = Modifier.weight(1 / 5f),
+                text = "Date : ",
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.weight(1 / 5f))
+            Button(modifier = Modifier.weight(2 / 5f), onClick = {
+                mDatePickerDialog.show()
+            }, colors = ButtonDefaults.buttonColors(backgroundColor = Color(0XFF0F9D58))) {
+                Text(text = date.value, color = Color.White)
+            }
+            Spacer(modifier = Modifier.weight(1 / 5f))
+        }
+    }
+
     @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
     @SuppressLint("NotConstructor")
     @Composable
@@ -382,6 +425,11 @@ class TransactionScreen {
         val titleTransaction: MutableState<TextFieldValue> = remember {
             mutableStateOf(
                 TextFieldValue(transaction.title_transaction)
+            )
+        }
+        val descriptionTransaction: MutableState<TextFieldValue> = remember {
+            mutableStateOf(
+                TextFieldValue(transaction.description_transaction)
             )
         }
         val amountTransaction: MutableState<TextFieldValue> =
@@ -512,81 +560,15 @@ class TransactionScreen {
             }
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // TODO - change it in strings.xml
-                    Text(
-                        modifier = Modifier.weight(1 / 3f),
-                        text = "Title : ",
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.weight(1 / 8f))
-                    TextField(
-                        modifier = Modifier
-                            .padding(3.dp)
-                            .weight(5 / 6f),
-                        value = titleTransaction.value,
-                        onValueChange = { newText ->
-                            isTitleError.value = false
-                            if (titleTransaction.value.text.length < 25) {
-                                titleTransaction.value = newText
-                            }
-                        }
-                    )
-                    if (isTitleError.value) {
-                        Text(
-                            stringResource(id = R.string.message_size_error_message),
-                            color = MaterialTheme.colors.error,
-                            style = MaterialTheme.typography.caption,
-                            modifier = Modifier.padding(start = 16.dp)
-                        )
-                    }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // TODO - change it in strings.xml
-                    Text(
-                        modifier = Modifier.weight(1 / 3f),
-                        text = "Amount : ",
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.weight(1 / 8f))
-                    TextField(
-                        modifier = Modifier
-                            .padding(3.dp)
-                            .weight(5 / 6f),
-                        value = amountTransaction.value,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        onValueChange = { newText ->
-                            isAmountError.value = false
-                            if (amountTransaction.value.text.length < 25) {
-                                amountTransaction.value = newText
-                            }
-                        }
-                    )
-                    if (isAmountError.value) {
-                        Text(
-                            stringResource(id = R.string.message_size_error_message),
-                            color = MaterialTheme.colors.error,
-                            style = MaterialTheme.typography.caption,
-                            modifier = Modifier.padding(start = 16.dp)
-                        )
-                    }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // TODO - change it in strings.xml
-                    Text(
-                        modifier = Modifier.weight(1 / 5f),
-                        text = "Date : ",
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.weight(1 / 5f))
-                    Button(modifier = Modifier.weight(2 / 5f), onClick = {
-                        mDatePickerDialog.show()
-                    }, colors = ButtonDefaults.buttonColors(backgroundColor = Color(0XFF0F9D58))) {
-                        Text(text = date.value, color = Color.White)
-                    }
-                    Spacer(modifier = Modifier.weight(1 / 5f))
-                }
-
+                ShowTransactionContent(
+                    titleTransaction,
+                    isTitleError,
+                    amountTransaction,
+                    descriptionTransaction,
+                    isAmountError,
+                    mDatePickerDialog,
+                    date
+                )
                 Box {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         //TODO string.xml

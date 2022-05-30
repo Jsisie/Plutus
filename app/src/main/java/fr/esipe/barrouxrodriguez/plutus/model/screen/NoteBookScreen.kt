@@ -27,6 +27,7 @@ import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBookWithTransactionsAnd
 import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
 import fr.esipe.barrouxrodriguez.plutus.nameTagViewModel
 import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
+import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
 
 class NoteBookScreen {
     private val notebookVM = notebookViewModel
@@ -39,9 +40,6 @@ class NoteBookScreen {
         val noteBookWithLists: NoteBookWithTransactionsAndBudget = idNoteBook?.let {
             notebookVM.findNoteBookById(it).observeAsState().value
         } ?: return
-
-        val bob = nameTagViewModel.readAllData.observeAsState().value
-        val bob2 = transactionViewModel.readAllData.observeAsState().value
 
         Scaffold(
             topBar = {
