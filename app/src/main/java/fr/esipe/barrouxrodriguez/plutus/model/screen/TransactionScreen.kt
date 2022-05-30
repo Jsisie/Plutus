@@ -67,9 +67,9 @@ class TransactionScreen {
         }
         val customTags = nameTagViewModel.readAllPredefined.observeAsState(emptyList()).value
 
-        val year: Int
-        val month: Int
-        val day: Int
+        var year: Int
+        var month: Int
+        var day: Int
 
         val calendar = Calendar.getInstance()
 
@@ -79,17 +79,19 @@ class TransactionScreen {
 
         calendar.time = Date()
 
-
         // Declaring a string value to
         // store date in string format
-        val date = remember { mutableStateOf("Pick a Date") }
+        val date = remember { mutableStateOf(Converters.printDate(calendar.time, "yyyy-MM-dd")) }
 
         // Declaring DatePickerDialog and setting
         // initial values as current values (present year, month and day)
         val mDatePickerDialog = DatePickerDialog(
             LocalContext.current,
-            { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-                date.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
+            { _: DatePicker, mYear: Int, mMonth: Int, mDay: Int ->
+                date.value = "$mYear/$mDay/${mMonth + 1}"
+                year = mYear
+                month = mMonth
+                day = mDay
             }, year, month, day
         )
 
@@ -125,12 +127,13 @@ class TransactionScreen {
                     Box(Modifier.weight(1f / 5f)) {
                         if (titleTransaction.value.text.isNotEmpty() && amountTransaction.value.text.isNotEmpty() && date.value != "Pick a Date") {
                             Button(modifier = Modifier.padding(10.dp), onClick = {
+                                Log.d("nt", "$year $month $day")
                                 calendar.set(year, month, day)
                                 Log.d("aled", "$calendar.time")
                                 val transaction = idNoteBook?.let {
                                     Transaction(
                                         title_transaction = titleTransaction.value.text,
-                                        amount_transaction = Integer.parseInt(amountTransaction.value.text),
+                                        amount_transaction = amountTransaction.value.text.toFloat(),
                                         date_transaction = calendar.time,
                                         idNotebook = it
                                     )
