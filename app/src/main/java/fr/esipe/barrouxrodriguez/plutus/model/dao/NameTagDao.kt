@@ -21,4 +21,7 @@ interface NameTagDao {
 
     @Delete
     suspend fun delete(nameTag: NameTag)
+
+    @Query("DELETE FROM NameTag WHERE idTransaction =:idTransaction")
+    suspend fun deleteByTransaction(idTransaction: Int)
 }

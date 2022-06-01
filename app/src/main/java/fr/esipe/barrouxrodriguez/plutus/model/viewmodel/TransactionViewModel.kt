@@ -32,13 +32,20 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    fun insertWithNameTags(transaction: Transaction, nameTagsList: List<String>) {
+    fun insertWithStrings(transaction: Transaction, nameTagsList: List<String>) {
         viewModelScope.launch(Dispatchers.IO) {
             val id = transactionDao.insertAll(transaction)[0]
             val arrayNT = nameTagsList.stream().map { tag -> NameTag(tag, id.toInt()) }.toList()
                 .toTypedArray()
 
             nameTagDao.insertAll(*arrayNT)
+        }
+    }
+
+    fun insertWithNameTags(transaction: Transaction, nameTagsList: List<NameTag>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val id = transactionDao.insertAll(transaction)[0]
+            nameTagDao.insertAll(*nameTagsList.toTypedArray())
         }
     }
 
