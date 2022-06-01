@@ -2,26 +2,29 @@ package fr.esipe.barrouxrodriguez.plutus.model.screen
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.util.Log
 import android.widget.DatePicker
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ExperimentalGraphicsApi
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -43,10 +46,8 @@ import kotlin.streams.toList
 
 class TransactionScreen {
 
-    @OptIn(
-        ExperimentalMaterialApi::class, ExperimentalFoundationApi::class,
-        ExperimentalGraphicsApi::class
-    )
+
+    @OptIn(ExperimentalMaterialApi::class)
     @SuppressLint("NotConstructor")
     @Composable
     fun AddNameTagToTransaction(navController: NavController, idNoteBook: Int?) {
@@ -55,18 +56,24 @@ class TransactionScreen {
                 TextFieldValue("")
             )
         }
+
         val descriptionTransaction: MutableState<TextFieldValue> = remember {
             mutableStateOf(
                 TextFieldValue("")
             )
         }
+
         val amountTransaction: MutableState<TextFieldValue> =
             remember { mutableStateOf(TextFieldValue("")) }
+
         val isTitleError: MutableState<Boolean> = remember { mutableStateOf(false) }
+
         val isAmountError: MutableState<Boolean> = remember { mutableStateOf(false) }
+
         val nameTagList: MutableList<String> = remember {
             mutableStateListOf()
         }
+
         val openNameTagDialog: MutableState<Boolean> = remember {
             mutableStateOf(false)
         }
@@ -128,7 +135,7 @@ class TransactionScreen {
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = stringResource(id = R.string.create_transaction),
+                            text = stringResource(id = R.string.transaction),
                             textAlign = TextAlign.Center,
                             fontSize = 24.sp
                         )
@@ -182,117 +189,154 @@ class TransactionScreen {
 
                 }
             }
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                ShowTransactionContent(
-                    titleTransaction,
-                    isTitleError,
-                    amountTransaction,
-                    descriptionTransaction,
-                    isAmountError,
-                    mDatePickerDialog,
-                    date
-                )
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                Column(modifier = Modifier.weight(0.3f)) {
+                    ShowTransactionContent(
+                        titleTransaction,
+                        isTitleError,
+                        amountTransaction,
+                        descriptionTransaction,
+                        isAmountError,
+                        mDatePickerDialog,
+                        date
+                    )
+                }
 
-                Box {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        //TODO string.xml
-                        Text(text = "Predefined Tags:", textAlign = TextAlign.Center)
-                        LazyVerticalGrid(
-                            cells = GridCells.Adaptive(150.dp)
+                Column(Modifier.weight(0.7f)) {
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1 / 2f)) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            items(nameTagViewModel.predefTags.sorted()) { tag ->
-                                val selected = tag in nameTagList
-                                Card(elevation = 5.dp, modifier = Modifier.padding(2.dp),
-                                    onClick = {
-                                        if (selected) {
-                                            nameTagList.remove(tag)
-                                        } else {
-                                            nameTagList.add(tag)
-                                        }
-                                    },
-                                    backgroundColor = if (selected) Color(
-                                        67,
-                                        193,
-                                        215
-                                    ) else Color.LightGray,
-                                    content = {
-                                        Column(
-                                            Modifier.fillMaxSize(),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            Text(
-                                                text = tag,
-                                                textAlign = TextAlign.Center,
-                                                fontSize = 24.sp
-                                            )
-                                        }
-                                    })
-                            }
-                        }
-
-
-                        "".isNotEmpty()
-
-                        Text(text = "Custom Tags:", textAlign = TextAlign.Center)
-                        LazyVerticalGrid(
-                            cells = GridCells.Adaptive(150.dp)
-                        ) {
-                            items(customTags.sorted()) { tag ->
-                                val selected = tag.titleNameTag in nameTagList
-                                Card(elevation = 5.dp, modifier = Modifier.padding(2.dp),
-                                    onClick = {
-                                        if (selected) {
-                                            nameTagList.remove(tag.titleNameTag)
-                                        } else {
-                                            nameTagList.add(tag.titleNameTag)
-                                        }
-                                    },
-                                    backgroundColor = if (selected) Color(
-                                        67,
-                                        193,
-                                        215
-                                    ) else Color.LightGray,
-                                    content = {
-                                        Column(
-                                            Modifier.fillMaxSize(),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            Row(
+                            Text(text = "Predefined Tags:", textAlign = TextAlign.Center)
+                            LazyHorizontalGrid(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(5.dp),
+                                rows = GridCells.Fixed(2)
+                            ) {
+                                items(nameTagViewModel.predefTags.sorted()) { tag ->
+                                    val selected = tag in nameTagList
+                                    Card(
+                                        modifier = Modifier
+                                            .width(80.dp)
+                                            .height(45.dp)
+                                            .padding(2.dp),
+                                        elevation = 5.dp,
+                                        onClick = {
+                                            if (selected) {
+                                                nameTagList.remove(tag)
+                                            } else {
+                                                nameTagList.add(tag)
+                                            }
+                                        },
+                                        backgroundColor = if (selected) Color(
+                                            67,
+                                            193,
+                                            215
+                                        ) else Color.LightGray,
+                                        content = {
+                                            Column(
                                                 Modifier.fillMaxSize(),
-                                                verticalAlignment = Alignment.CenterVertically
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
                                             ) {
                                                 Text(
-                                                    modifier = Modifier
-                                                        .weight(4 / 6f)
-                                                        .fillMaxSize()
-                                                        .padding(5.dp),
-                                                    text = tag.titleNameTag,
+                                                    text = tag,
                                                     textAlign = TextAlign.Center,
-                                                    fontSize = 24.sp
+                                                    fontSize = 15.sp
                                                 )
-                                                Button(
-                                                    modifier = Modifier
-                                                        .weight(2 / 6f)
-                                                        .padding(10.dp),
-                                                    onClick = {
-                                                        nameTagViewModel.delete(tag)
-                                                    }) {
-                                                    Icon(
-                                                        Icons.Filled.Delete,
-                                                        stringResource(id = R.string.delete_notebook)
+                                            }
+                                        })
+                                }
+                            }
+                        }
+                    }
+
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1 / 2f)) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(text = "Custom Tags:", textAlign = TextAlign.Center)
+                            LazyHorizontalGrid(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(5.dp),
+                                rows = GridCells.Fixed(2)
+                            ) {
+                                items(customTags.sorted()) { tag ->
+                                    val selected = tag.titleNameTag in nameTagList
+                                    Log.d("aled", "$tag")
+                                    Card(
+                                        modifier = Modifier
+                                            .width(80.dp)
+                                            .height(45.dp)
+                                            .padding(2.dp)
+                                        .pointerInput(Unit) {
+                                            detectTapGestures(
+                                                onLongPress = {
+                                                    nameTagViewModel.delete(tag)
+                                                    nameTagList.remove(tag.titleNameTag)
+                                                },
+                                                onTap = {
+                                                    Log.d("aled", "$selected")
+                                                    if (tag.titleNameTag in nameTagList) {
+                                                        nameTagList.remove(tag.titleNameTag)
+                                                    } else {
+                                                        Log.d(
+                                                            "aled",
+                                                            nameTagList.joinToString(", ")
+                                                        )
+                                                        nameTagList.add(tag.titleNameTag)
+                                                        Log.d(
+                                                            "aled",
+                                                            nameTagList.joinToString(",")
+                                                        )
+                                                    }
+                                                }
+                                            )
+                                        },
+                                        elevation = 5.dp,
+                                        backgroundColor = if (selected) Color(
+                                            67,
+                                            193,
+                                            215
+                                        ) else Color.LightGray,
+                                        content = {
+                                            Column(
+                                                Modifier.fillMaxSize(),
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                Row(
+                                                    Modifier.fillMaxSize(),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Text(
+                                                        modifier = Modifier
+                                                            .padding(5.dp),
+                                                        text = tag.titleNameTag,
+                                                        textAlign = TextAlign.Center,
+                                                        fontSize = 15.sp
                                                     )
                                                 }
                                             }
-                                        }
-                                    })
+                                        })
+                                }
                             }
                         }
                     }
                 }
-
                 AlertDialogUtil.ShowAlertDialog(
                     openDialog = openNameTagDialog,
                     title = stringResource(id = R.string.create_name_tag),
@@ -383,24 +427,6 @@ class TransactionScreen {
         Row(verticalAlignment = Alignment.CenterVertically) {
             // TODO - change it in strings.xml
             Text(
-                modifier = Modifier.weight(1 / 3f),
-                text = "Description : ",
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.weight(1 / 8f))
-            TextField(
-                modifier = Modifier
-                    .padding(3.dp)
-                    .weight(5 / 6f),
-                value = descriptionTransaction.value,
-                onValueChange = { newText ->
-                    descriptionTransaction.value = newText
-                }
-            )
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            // TODO - change it in strings.xml
-            Text(
                 modifier = Modifier.weight(1 / 5f),
                 text = "Date : ",
                 textAlign = TextAlign.Center
@@ -438,7 +464,7 @@ class TransactionScreen {
                 TextFieldValue(transaction.description_transaction)
             )
         }
-        
+
         val amountTransaction: MutableState<TextFieldValue> =
             remember { mutableStateOf(TextFieldValue(transaction.amount_transaction.toString())) }
         val isTitleError: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -565,126 +591,183 @@ class TransactionScreen {
 
                 }
             }
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                ShowTransactionContent(
-                    titleTransaction,
-                    isTitleError,
-                    amountTransaction,
-                    descriptionTransaction,
-                    isAmountError,
-                    mDatePickerDialog,
-                    date
-                )
-                Box {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        //TODO string.xml
-                        Text(text = "Tags of the transaction:", textAlign = TextAlign.Center)
-                        LazyVerticalGrid(
-                            cells = GridCells.Adaptive(150.dp)
-                        ) {
-                            items(actualTagMap.keys.stream().sorted().toList()) { tag ->
-                                Card(elevation = 5.dp, modifier = Modifier.padding(2.dp),
-                                    onClick = {
-                                        actualTagMap.remove(tag)
-                                    },
-                                    backgroundColor = Color.LightGray,
-                                    content = {
-                                        Column(
-                                            Modifier.fillMaxSize(),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            Text(
-                                                text = tag.titleNameTag,
-                                                textAlign = TextAlign.Center,
-                                                fontSize = 24.sp
-                                            )
-                                        }
-                                    })
-                            }
-                        }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(innerPadding)
+            ) {
 
-                        //TODO string.xml
-                        Text(text = "Predefined Tags:", textAlign = TextAlign.Center)
-                        LazyVerticalGrid(
-                            cells = GridCells.Adaptive(150.dp)
-                        ) {
-                            items(nameTagViewModel.predefTags) { tag ->
-                                Card(elevation = 5.dp, modifier = Modifier.padding(2.dp),
-                                    onClick = {
-                                        val newTag =
-                                            NameTag(tag, transaction.idTransaction)
-                                        actualTagMap[newTag] = newTag
-                                    },
-                                    backgroundColor = Color.LightGray,
-                                    content = {
-                                        Column(
-                                            Modifier.fillMaxSize(),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            Text(
-                                                text = tag,
-                                                textAlign = TextAlign.Center,
-                                                fontSize = 24.sp
-                                            )
-                                        }
-                                    })
-                            }
-                        }
+                Column(modifier = Modifier.weight(0.3f)) {
+                    ShowTransactionContent(
+                        titleTransaction,
+                        isTitleError,
+                        amountTransaction,
+                        descriptionTransaction,
+                        isAmountError,
+                        mDatePickerDialog,
+                        date
+                    )
+                }
 
-                        Text(text = "Custom Tags:", textAlign = TextAlign.Center)
-                        LazyVerticalGrid(
-                            cells = GridCells.Adaptive(150.dp)
+                Column(Modifier.weight(0.7f)) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1 / 3f)
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            items(customTags.size) { i ->
-                                val tag = customTags[i]
-                                Card(elevation = 5.dp, modifier = Modifier.padding(2.dp),
-                                    onClick = {
-                                        val newTag =
-                                            NameTag(tag.titleNameTag, transaction.idTransaction)
-                                        actualTagMap[newTag] = newTag
-                                    },
-                                    backgroundColor = Color.LightGray,
-                                    content = {
-                                        Column(
-                                            Modifier.fillMaxSize(),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            Row(
-                                                Modifier.fillMaxSize(),
-                                                verticalAlignment = Alignment.CenterVertically
+                            Text(
+                                text = "Transaction's tags:",
+                                textAlign = TextAlign.Center
+                            )
+                            LazyHorizontalGrid(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(5.dp),
+                                rows = GridCells.Fixed(2)
+                            ) {
+                                items(actualTagMap.keys.stream().sorted().toList()) { tag ->
+                                    Card(
+                                        modifier = Modifier
+                                            .width(80.dp)
+                                            .height(45.dp)
+                                            .padding(2.dp),
+                                        elevation = 5.dp,
+                                        onClick = {
+                                            actualTagMap.remove(tag)
+                                        },
+                                        backgroundColor = Color.LightGray,
+                                        content = {
+                                            Column(
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
                                             ) {
                                                 Text(
-                                                    modifier = Modifier
-                                                        .weight(4 / 6f)
-                                                        .fillMaxSize()
-                                                        .padding(5.dp),
                                                     text = tag.titleNameTag,
                                                     textAlign = TextAlign.Center,
-                                                    fontSize = 24.sp
+                                                    fontSize = 15.sp
                                                 )
-                                                Button(
-                                                    modifier = Modifier
-                                                        .weight(2 / 6f)
-                                                        .padding(10.dp),
-                                                    onClick = {
-                                                        nameTagViewModel.delete(tag)
-                                                    }) {
-                                                    Icon(
-                                                        Icons.Filled.Delete,
-                                                        stringResource(id = R.string.delete_notebook)
-                                                    )
-                                                }
                                             }
-                                        }
-                                    })
+                                        })
+                                }
                             }
                         }
                     }
 
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1 / 3f)
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            //TODO string.xml
+                            Text(text = "Predefined Tags:", textAlign = TextAlign.Center)
+                            LazyHorizontalGrid(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(5.dp),
+                                rows = GridCells.Fixed(2)
+                            ) {
+                                items(nameTagViewModel.predefTags) { tag ->
+                                    Card(modifier = Modifier
+                                        .width(80.dp)
+                                        .height(45.dp)
+                                        .padding(2.dp),
+                                        onClick = {
+                                            val newTag =
+                                                NameTag(tag, transaction.idTransaction)
+                                            actualTagMap[newTag] = newTag
+                                        },
+                                        backgroundColor = Color.LightGray,
+                                        content = {
+                                            Column(
+                                                Modifier.fillMaxSize(),
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                Text(
+                                                    text = tag,
+                                                    textAlign = TextAlign.Center,
+                                                    fontSize = 15.sp,
+                                                    color = if (tag in actualTagMap.keys.map { tag -> tag.titleNameTag }) Color(
+                                                        0,
+                                                        0,
+                                                        0,
+                                                        128
+                                                    ) else Color.Black
+                                                )
+                                            }
+                                        })
+                                }
+                            }
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1 / 3f)
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "Custom Tags:", textAlign = TextAlign.Center)
+                            LazyHorizontalGrid(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(5.dp),
+                                rows = GridCells.Fixed(2)
+
+                            ) {
+                                items(customTags) { tag ->
+                                    Card(
+                                        modifier = Modifier
+                                            .width(80.dp)
+                                            .height(45.dp)
+                                            .padding(2.dp)
+                                            .pointerInput(Unit) {
+                                                detectTapGestures(
+                                                    onLongPress = {
+                                                        nameTagViewModel.delete(tag)
+                                                        actualTagMap.remove(tag)
+                                                    },
+                                                    onTap = {
+                                                        val newTag =
+                                                            NameTag(
+                                                                tag.titleNameTag,
+                                                                transaction.idTransaction
+                                                            )
+                                                        actualTagMap[newTag] = newTag
+                                                    }
+                                                )
+                                            },
+                                        elevation = 5.dp,
+                                        backgroundColor = Color.LightGray,
+                                        content = {
+                                            Column(
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                Text(
+                                                    text = tag.titleNameTag,
+                                                    textAlign = TextAlign.Center,
+                                                    fontSize = 15.sp,
+                                                    color = if (tag.titleNameTag in actualTagMap.keys.map { tag -> tag.titleNameTag }) Color(
+                                                        0,
+                                                        0,
+                                                        0,
+                                                        128
+                                                    ) else Color.Black
+                                                )
+                                            }
+                                        })
+                                }
+                            }
+                        }
+                    }
                 }
 
                 AlertDialogUtil.ShowAlertDialog(
