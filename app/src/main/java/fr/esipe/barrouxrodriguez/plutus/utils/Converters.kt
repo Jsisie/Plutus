@@ -1,4 +1,4 @@
-package fr.esipe.barrouxrodriguez.plutus.model
+package fr.esipe.barrouxrodriguez.plutus.utils
 
 import androidx.room.TypeConverter
 import java.text.SimpleDateFormat

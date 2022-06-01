@@ -13,6 +13,7 @@ import fr.esipe.barrouxrodriguez.plutus.model.entity.Budget
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
 import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
+import fr.esipe.barrouxrodriguez.plutus.utils.Converters
 
 @Database(
     version = 1,

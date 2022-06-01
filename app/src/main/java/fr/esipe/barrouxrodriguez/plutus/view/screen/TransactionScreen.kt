@@ -1,4 +1,4 @@
-package fr.esipe.barrouxrodriguez.plutus.model.screen
+package fr.esipe.barrouxrodriguez.plutus.view.screen
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
@@ -34,13 +34,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import fr.esipe.barrouxrodriguez.plutus.R
-import fr.esipe.barrouxrodriguez.plutus.model.Converters
+import fr.esipe.barrouxrodriguez.plutus.controller.nameTagViewModel
+import fr.esipe.barrouxrodriguez.plutus.controller.transactionViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
 import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
 import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
-import fr.esipe.barrouxrodriguez.plutus.model.utils.AlertDialogUtil
-import fr.esipe.barrouxrodriguez.plutus.nameTagViewModel
-import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
+import fr.esipe.barrouxrodriguez.plutus.utils.AlertDialogUtil
+import fr.esipe.barrouxrodriguez.plutus.utils.Converters
 import java.util.*
 import kotlin.streams.toList
 
@@ -208,9 +208,11 @@ class TransactionScreen {
                 }
 
                 Column(Modifier.weight(0.7f)) {
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1 / 2f)) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1 / 2f)
+                    ) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -260,9 +262,11 @@ class TransactionScreen {
                         }
                     }
 
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1 / 2f)) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1 / 2f)
+                    ) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -282,30 +286,30 @@ class TransactionScreen {
                                             .width(80.dp)
                                             .height(45.dp)
                                             .padding(2.dp)
-                                        .pointerInput(Unit) {
-                                            detectTapGestures(
-                                                onLongPress = {
-                                                    nameTagViewModel.delete(tag)
-                                                    nameTagList.remove(tag.titleNameTag)
-                                                },
-                                                onTap = {
-                                                    Log.d("aled", "$selected")
-                                                    if (tag.titleNameTag in nameTagList) {
+                                            .pointerInput(Unit) {
+                                                detectTapGestures(
+                                                    onLongPress = {
+                                                        nameTagViewModel.delete(tag)
                                                         nameTagList.remove(tag.titleNameTag)
-                                                    } else {
-                                                        Log.d(
-                                                            "aled",
-                                                            nameTagList.joinToString(", ")
-                                                        )
-                                                        nameTagList.add(tag.titleNameTag)
-                                                        Log.d(
-                                                            "aled",
-                                                            nameTagList.joinToString(",")
-                                                        )
+                                                    },
+                                                    onTap = {
+                                                        Log.d("aled", "$selected")
+                                                        if (tag.titleNameTag in nameTagList) {
+                                                            nameTagList.remove(tag.titleNameTag)
+                                                        } else {
+                                                            Log.d(
+                                                                "aled",
+                                                                nameTagList.joinToString(", ")
+                                                            )
+                                                            nameTagList.add(tag.titleNameTag)
+                                                            Log.d(
+                                                                "aled",
+                                                                nameTagList.joinToString(",")
+                                                            )
+                                                        }
                                                     }
-                                                }
-                                            )
-                                        },
+                                                )
+                                            },
                                         elevation = 5.dp,
                                         backgroundColor = if (selected) Color(
                                             67,

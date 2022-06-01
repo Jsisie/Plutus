@@ -1,4 +1,4 @@
-package fr.esipe.barrouxrodriguez.plutus.model.screen
+package fr.esipe.barrouxrodriguez.plutus.view.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
@@ -22,10 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import fr.esipe.barrouxrodriguez.plutus.R
-import fr.esipe.barrouxrodriguez.plutus.model.utils.AlertDialogUtil
-import fr.esipe.barrouxrodriguez.plutus.model.Converters
+import fr.esipe.barrouxrodriguez.plutus.controller.notebookViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
-import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
+import fr.esipe.barrouxrodriguez.plutus.utils.AlertDialogUtil
+import fr.esipe.barrouxrodriguez.plutus.utils.Converters
 
 class HomePageScreen {
     @SuppressLint("NotConstructor")
@@ -193,7 +193,7 @@ class HomePageScreen {
             AlertDialogUtil.ShowAlertDialog(
                 openDialog = openDeleteDialog,
                 title = stringResource(id = R.string.delete_notebook),
-                onConfirmClick = {_, _ -> notebookViewModel.delete(selectedNoteBook.value)},
+                onConfirmClick = { _, _ -> notebookViewModel.delete(selectedNoteBook.value) },
                 isTextFieldValue = false
             )
         }

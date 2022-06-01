@@ -1,4 +1,4 @@
-package fr.esipe.barrouxrodriguez.plutus.ui.theme
+package fr.esipe.barrouxrodriguez.plutus.view.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

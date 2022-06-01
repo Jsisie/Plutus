@@ -1,4 +1,4 @@
-package fr.esipe.barrouxrodriguez.plutus.model.utils
+package fr.esipe.barrouxrodriguez.plutus.utils
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
@@ -50,6 +50,8 @@ class AlertDialogUtil {
             onErrorText: String = "Error",
             isTextFieldValue: Boolean = true,
         ) {
+
+
             val isError: MutableState<Boolean> = remember { mutableStateOf(false) }
             val textChange: MutableState<TextFieldValue> =
                 remember { mutableStateOf(TextFieldValue("")) }

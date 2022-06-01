@@ -1,8 +1,7 @@
-package fr.esipe.barrouxrodriguez.plutus
+package fr.esipe.barrouxrodriguez.plutus.controller
 
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +14,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import fr.esipe.barrouxrodriguez.plutus.model.screen.*
+import fr.esipe.barrouxrodriguez.plutus.view.screen.*
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NameTagViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NoteBookViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.TransactionViewModel
@@ -80,7 +79,6 @@ fun NavigationBasicsApp() {
     val homePageScreen = HomePageScreen()
     val transactionScreen = TransactionScreen()
     val budgetScreen = BudgetScreen()
-    val nameTagScreen = NameTagScreen()
 
     NavHost(navController = navController, startDestination = "homepage_screen") {
         composable("homepage_screen") { homePageScreen.HomePageScreen(navController) }
@@ -103,11 +101,6 @@ fun NavigationBasicsApp() {
         composable("budget_screen/{idNoteBook}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("idNoteBook")
             budgetScreen.BudgetScreen(navController, id?.toInt())
-        }
-
-        composable("nameTag_screen/{idNoteBook}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("idNoteBook")
-            nameTagScreen.NameTagScreen(navController, id?.toInt())
         }
     }
 }
