@@ -2,17 +2,14 @@ package fr.esipe.barrouxrodriguez.plutus.model.screen
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.util.Log
 import android.widget.DatePicker
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -151,7 +148,7 @@ class TransactionScreen {
                                     )
                                 }
                                 if (transaction != null) {
-                                    transactionViewModel.insertWithNameTags(
+                                    transactionViewModel.insertWithStrings(
                                         transaction,
                                         nameTagList
                                     )
@@ -441,23 +438,22 @@ class TransactionScreen {
                 TextFieldValue(transaction.description_transaction)
             )
         }
+        
         val amountTransaction: MutableState<TextFieldValue> =
             remember { mutableStateOf(TextFieldValue(transaction.amount_transaction.toString())) }
         val isTitleError: MutableState<Boolean> = remember { mutableStateOf(false) }
         val isAmountError: MutableState<Boolean> = remember { mutableStateOf(false) }
 
-        val nameTagMap: MutableMap<NameTag, NameTag> = remember {
-            mutableStateMapOf()
-        }
-
-        // FIXME Will create bug if remove every nameTag
-        if (nameTagMap.isEmpty()) {
-            transactionWithNameTags.nameTags.forEach { nameTag -> nameTagMap[nameTag] = nameTag }
+        val actualTagMap: MutableMap<NameTag, NameTag> = remember {
+            val map = mutableStateMapOf<NameTag, NameTag>()
+            transactionWithNameTags.nameTags.forEach { nameTag -> map[nameTag] = nameTag }
+            map
         }
 
         val openNameTagDialog: MutableState<Boolean> = remember {
             mutableStateOf(false)
         }
+
         val customTags = nameTagViewModel.readAllPredefined.observeAsState(emptyList()).value
 
         val year: Int
@@ -480,6 +476,7 @@ class TransactionScreen {
                 )
             )
         }
+
         val mDatePickerDialog = DatePickerDialog(
             LocalContext.current,
             { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
@@ -519,22 +516,25 @@ class TransactionScreen {
                         if (titleTransaction.value.text.isNotEmpty() && amountTransaction.value.text.isNotEmpty() && date.value != "Pick a Date") {
                             Button(modifier = Modifier.padding(10.dp), onClick = {
                                 calendar.set(year, month, day)
-                                /*
-                                val transaction = idNoteBook?.let {
+
+                                val updateTransaction = idNoteBook.let {
                                     Transaction(
                                         title_transaction = titleTransaction.value.text,
-                                        amount_transaction = Integer.parseInt(amountTransaction.value.text),
+                                        amount_transaction = amountTransaction.value.text.toFloat(),
                                         date_transaction = calendar.time,
-                                        idNotebook = it
+                                        description_transaction = descriptionTransaction.value.text,
+                                        idNotebook = it,
+                                        idTransaction = transaction.idTransaction
                                     )
                                 }
-                                if (transaction != null) {
-                                    transactionViewModel.insertWithNameTags(
-                                        transaction,
-                                        nameTagList
-                                    )
-                                }
-                                */
+
+                                nameTagViewModel.deleteByTransaction(transaction.idTransaction)
+
+                                transactionViewModel.insertWithNameTags(
+                                    updateTransaction,
+                                    nameTagsList = actualTagMap.keys.toList()
+                                )
+
                                 navController.navigate("notebook_screen/$idNoteBook")
                             })
                             {
@@ -583,10 +583,10 @@ class TransactionScreen {
                         LazyVerticalGrid(
                             cells = GridCells.Adaptive(150.dp)
                         ) {
-                            items(nameTagMap.keys.stream().sorted().toList()) { tag ->
+                            items(actualTagMap.keys.stream().sorted().toList()) { tag ->
                                 Card(elevation = 5.dp, modifier = Modifier.padding(2.dp),
                                     onClick = {
-                                        nameTagMap.remove(tag)
+                                        actualTagMap.remove(tag)
                                     },
                                     backgroundColor = Color.LightGray,
                                     content = {
@@ -615,7 +615,7 @@ class TransactionScreen {
                                     onClick = {
                                         val newTag =
                                             NameTag(tag, transaction.idTransaction)
-                                        nameTagMap[newTag] = newTag
+                                        actualTagMap[newTag] = newTag
                                     },
                                     backgroundColor = Color.LightGray,
                                     content = {
@@ -644,7 +644,7 @@ class TransactionScreen {
                                     onClick = {
                                         val newTag =
                                             NameTag(tag.titleNameTag, transaction.idTransaction)
-                                        nameTagMap[newTag] = newTag
+                                        actualTagMap[newTag] = newTag
                                     },
                                     backgroundColor = Color.LightGray,
                                     content = {

@@ -31,6 +31,13 @@ class NameTagViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    fun deleteByTransaction(idTransaction: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            nameTagDao.deleteByTransaction(idTransaction)
+        }
+    }
+
+
     class NameTagModelFactory(
         private val application: Application,
     ) : ViewModelProvider.Factory {
