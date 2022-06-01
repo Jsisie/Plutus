@@ -49,7 +49,6 @@ class BudgetScreen {
                 }
             }")
 
-
             Spacer(modifier = Modifier.padding(top = 16.dp))
 
             Button(onClick = { navController.navigate("transaction_screen/$idNoteBook") }) {

@@ -33,7 +33,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val context = LocalContext.current
-                    Log.d("aled", "aled")
                     ntViewModel = viewModel(
                         factory =
                         NameTagViewModel.NameTagModelFactory(
