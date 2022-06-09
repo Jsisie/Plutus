@@ -1,24 +1,38 @@
 package fr.esipe.barrouxrodriguez.plutus.utils
 
+import android.app.DatePickerDialog
 import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import android.util.Size
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import fr.esipe.barrouxrodriguez.plutus.R
+import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
+import java.util.function.Predicate
 
-class AlertDialogUtil {
+class UIUtils {
 
     companion object {
-
-
         /**
          * Static method that show an {@link AlertDialog}.
          * It factorize the error handling and the display of an AlertDialog
@@ -108,6 +122,69 @@ class AlertDialogUtil {
                         }
                     }
                 )
+            }
+        }
+
+
+        @OptIn(ExperimentalMaterialApi::class)
+        @Composable
+        fun ShowListOfNameTags(
+            title: String,
+            titleSize: TextUnit = 13.sp,
+            tags: List<NameTag>,
+            tagsSize: TextUnit = 15.sp,
+            tagWidth: Dp = 120.dp,
+            tagHeight: Dp = 45.dp,
+            onLongPress: ((NameTag) -> Unit) = {},
+            onTap: ((NameTag) -> Unit),
+            selected: Predicate<NameTag>,
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = "$title :", textAlign = TextAlign.Center, fontSize = titleSize)
+                LazyHorizontalGrid(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp),
+                    rows = GridCells.Fixed(2)
+                ) {
+                    items(tags) { tag ->
+                        Card(
+                            modifier = Modifier
+                                .width(tagWidth)
+                                .height(tagHeight)
+                                .padding(2.dp)
+                                .pointerInput(Unit) {
+                                    detectTapGestures(
+                                        onLongPress = {
+                                            onLongPress.invoke(tag)
+                                        },
+                                        onTap = {
+                                            onTap.invoke(tag)
+                                        }
+                                    )
+                                },
+                            elevation = 5.dp,
+                            backgroundColor = Color.LightGray,
+                            content = {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = tag.titleNameTag,
+                                        textAlign = TextAlign.Center,
+                                        fontSize = tagsSize,
+                                        color = if (selected.test(tag)) Color(
+                                            66,
+                                            66,
+                                            66,
+                                            128
+                                        ) else Color.Black
+                                    )
+                                }
+                            })
+                    }
+                }
             }
         }
     }

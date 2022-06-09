@@ -29,8 +29,8 @@ import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
 import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
 import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
 import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
-import fr.esipe.barrouxrodriguez.plutus.utils.AlertDialogUtil
 import fr.esipe.barrouxrodriguez.plutus.utils.Converters
+import fr.esipe.barrouxrodriguez.plutus.utils.UIUtils
 
 class NoteBookScreen {
     private val notebookVM = notebookViewModel
@@ -193,16 +193,33 @@ class NoteBookScreen {
                                     },
                                 elevation = 5.dp
                             ) {
-                                Column {
-                                    Text(text = transaction.transaction.title_transaction)
-                                    // TODO - change it in strings.xml
-                                    Text(text = "${transaction.transaction.amount_transaction} €")
-                                    Text(
-                                        text = Converters.printDate(
-                                            transaction.transaction.date_transaction,
-                                            "yyyy-MM-dd"
+                                Row(Modifier.fillMaxWidth()) {
+                                    Column(modifier = Modifier.weight(0.3f)) {
+                                        Text(text = transaction.transaction.title_transaction)
+                                        // TODO - change it in strings.xml
+                                        Text(text = "${transaction.transaction.amount_transaction} €")
+                                        Text(
+                                            text = Converters.printDate(
+                                                transaction.transaction.date_transaction,
+                                                "yyyy-MM-dd"
+                                            )
                                         )
-                                    )
+                                    }
+                                    Box(modifier = Modifier
+                                        .height(80.dp)
+                                        .fillMaxWidth()
+                                        .weight(0.7f)) {
+                                        UIUtils.ShowListOfNameTags(
+                                            title = "Transaction's tags",
+                                            titleSize = 12.sp,
+                                            tags = transaction.nameTags.sorted(),
+                                            tagsSize = 12.sp,
+                                            tagWidth = 120.dp,
+                                            tagHeight = 15.dp,
+                                            onTap = {},
+                                            selected = { false }
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -210,7 +227,7 @@ class NoteBookScreen {
                 }
 
                 //Delete Transaction
-                AlertDialogUtil.ShowAlertDialog(
+                UIUtils.ShowAlertDialog(
                     openDialog = openDeleteDialog,
                     title = "Delete Transaction",
                     onConfirmClick = { _, _ -> transactionViewModel.delete(selectedTransaction.value) },

@@ -25,7 +25,7 @@ import fr.esipe.barrouxrodriguez.plutus.R
 
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
 import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
-import fr.esipe.barrouxrodriguez.plutus.utils.AlertDialogUtil
+import fr.esipe.barrouxrodriguez.plutus.utils.UIUtils
 import fr.esipe.barrouxrodriguez.plutus.utils.Converters
 
 class HomePageScreen {
@@ -152,7 +152,7 @@ class HomePageScreen {
             }
 
             // Add notebook
-            AlertDialogUtil.ShowAlertDialog(
+            UIUtils.ShowAlertDialog(
                 openDialog = openAddDialog,
                 title = stringResource(id = R.string.add_notebook),
                 confirmText = stringResource(id = R.string.add),
@@ -168,7 +168,7 @@ class HomePageScreen {
             )
 
             // Edit dialog
-            AlertDialogUtil.ShowAlertDialog(
+            UIUtils.ShowAlertDialog(
                 openDialog = openEditDialog,
                 title = stringResource(id = R.string.edit_notebook_name),
                 text = selectedNoteBook.value.titleNoteBook,
@@ -192,7 +192,7 @@ class HomePageScreen {
             )
 
             //Delete Notebook
-            AlertDialogUtil.ShowAlertDialog(
+            UIUtils.ShowAlertDialog(
                 openDialog = openDeleteDialog,
                 title = stringResource(id = R.string.delete_notebook),
                 onConfirmClick = { _, _ -> notebookViewModel.delete(selectedNoteBook.value) },

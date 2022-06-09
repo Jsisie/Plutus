@@ -38,7 +38,7 @@ import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
 import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
 import fr.esipe.barrouxrodriguez.plutus.nameTagViewModel
 import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
-import fr.esipe.barrouxrodriguez.plutus.utils.AlertDialogUtil
+import fr.esipe.barrouxrodriguez.plutus.utils.UIUtils
 import fr.esipe.barrouxrodriguez.plutus.utils.Converters
 import java.util.*
 import java.util.function.Predicate
@@ -261,7 +261,7 @@ class TransactionScreen {
                             .weight(1 / 3f)
                     ) {
 
-                        ShowListOfNameTags(
+                        UIUtils.ShowListOfNameTags(
                             title = "Predefined Tags",
                             tags = nameTagViewModel.predefTags,
                             onTap = { tag ->
@@ -280,7 +280,7 @@ class TransactionScreen {
                             .weight(1 / 3f)
                     ) {
 
-                        ShowListOfNameTags(
+                        UIUtils.ShowListOfNameTags(
                             title = "Custom Tags",
                             tags = customTags,
                             onLongPress = { tag ->
@@ -297,7 +297,7 @@ class TransactionScreen {
                     }
                 }
 
-                AlertDialogUtil.ShowAlertDialog(
+                UIUtils.ShowAlertDialog(
                     openDialog = openNameTagDialog,
                     title = stringResource(id = R.string.create_name_tag),
                     confirmText = stringResource(id = R.string.add),
@@ -315,66 +315,8 @@ class TransactionScreen {
         }
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
     @Composable
-    private fun ShowListOfNameTags(
-        title: String,
-        tags: List<NameTag>,
-        onLongPress: ((NameTag) -> Unit) = {},
-        onTap: ((NameTag) -> Unit),
-        selected: Predicate<NameTag>,
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = "$title :", textAlign = TextAlign.Center)
-            LazyHorizontalGrid(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp),
-                rows = GridCells.Fixed(2)
-            ) {
-                items(tags) { tag ->
-                    Card(
-                        modifier = Modifier
-                            .width(120.dp)
-                            .height(45.dp)
-                            .padding(2.dp)
-                            .pointerInput(Unit) {
-                                detectTapGestures(
-                                    onLongPress = {
-                                        onLongPress.invoke(tag)
-                                    },
-                                    onTap = {
-                                        onTap.invoke(tag)
-                                    }
-                                )
-                            },
-                        elevation = 5.dp,
-                        backgroundColor = Color.LightGray,
-                        content = {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = tag.titleNameTag,
-                                    textAlign = TextAlign.Center,
-                                    fontSize = 15.sp,
-                                    color = if (selected.test(tag)) Color(
-                                        66,
-                                        66,
-                                        66,
-                                        128
-                                    ) else Color.Black
-                                )
-                            }
-                        })
-                }
-            }
-        }
-    }
-
-    @Composable
-    private fun ShowTransactionContent(
+    fun  ShowTransactionContent(
         titleTransaction: MutableState<TextFieldValue>,
         isTitleError: MutableState<Boolean>,
         amountTransaction: MutableState<TextFieldValue>,
@@ -458,6 +400,8 @@ class TransactionScreen {
             Spacer(modifier = Modifier.weight(1 / 5f))
         }
     }
+
+
 
     @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
     @SuppressLint("NotConstructor")
@@ -686,9 +630,7 @@ class TransactionScreen {
                             .fillMaxWidth()
                             .weight(1 / 3f)
                     ) {
-
-
-                        ShowListOfNameTags(
+                        UIUtils.ShowListOfNameTags(
                             title = "Predefined Tags",
                             tags = nameTagViewModel.predefTags,
                             onTap = { tag ->
@@ -708,7 +650,7 @@ class TransactionScreen {
                             .weight(1 / 3f)
                     ) {
 
-                        ShowListOfNameTags(
+                        UIUtils.ShowListOfNameTags(
                             title = "Custom Tags",
                             tags = customTags,
                             onLongPress = { tag ->
@@ -729,7 +671,7 @@ class TransactionScreen {
                     }
                 }
 
-                AlertDialogUtil.ShowAlertDialog(
+                UIUtils.ShowAlertDialog(
                     openDialog = openNameTagDialog,
                     title = stringResource(id = R.string.create_name_tag),
                     confirmText = stringResource(id = R.string.add),
