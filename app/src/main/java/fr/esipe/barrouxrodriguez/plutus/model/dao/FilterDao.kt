@@ -6,27 +6,25 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
-import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
-import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
+import fr.esipe.barrouxrodriguez.plutus.model.entity.*
 
 @Dao
-interface TransactionDao {
+interface FilterDao {
 
     @androidx.room.Transaction
-    @Query("SELECT * FROM `Transaction`")
-    fun getAllWithNameTags(): LiveData<List<TransactionWithNameTags>>
+    @Query("SELECT * FROM `Filter`")
+    fun getAllWithNameTags(): LiveData<List<FilterWithNameTags>>
 
     @androidx.room.Transaction
-    @Query("SELECT *  FROM `Transaction` WHERE idTransaction = (:transaction)")
-    fun loadByIdWithNameTags(transaction: Int): LiveData<TransactionWithNameTags>
+    @Query("SELECT *  FROM `Filter` WHERE idFilter = (:idFilter)")
+    fun loadByIdWithNameTags(idFilter: Int): LiveData<FilterWithNameTags>
 
     @Insert(onConflict = REPLACE)
-    suspend fun insertAll(vararg transaction: Transaction): List<Long>
+    suspend fun insert(filter: Filter): Long
 
     @Insert(onConflict = REPLACE)
-    suspend fun insertWithNameTags(transaction: Transaction, vararg nameTags: NameTag)
+    suspend fun insertWithNameTags(filter: Filter, vararg nameTags: NameTag)
 
     @Delete
-    suspend fun delete(transaction: Transaction)
+    suspend fun delete(filter: Filter)
 }

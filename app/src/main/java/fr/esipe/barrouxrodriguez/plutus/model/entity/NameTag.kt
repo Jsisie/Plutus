@@ -11,20 +11,27 @@ import androidx.room.PrimaryKey
             parentColumns = ["idTransaction"], childColumns = ["idTransaction"],
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = Filter::class,
+            parentColumns = ["idFilter"], childColumns = ["idFilter"],
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE
         )
     ]
 )
 data class NameTag(
     val titleNameTag: String,
-    val idTransaction: Int?,
+    val idTransaction: Int? = null,
     val isPredefined: Boolean = false,
+    val idFilter: Int? = null,
     @PrimaryKey(autoGenerate = true) val idNameTag: Int = 0
 ) : Comparable<NameTag> {
     override fun compareTo(other: NameTag): Int {
         return titleNameTag.compareTo(other.titleNameTag)
     }
 
-    fun copyWithNewTransaction(idTransaction: Int): NameTag{
+    fun copyWithNewTransaction(idTransaction: Int): NameTag {
         return NameTag(titleNameTag, idTransaction, false)
     }
 

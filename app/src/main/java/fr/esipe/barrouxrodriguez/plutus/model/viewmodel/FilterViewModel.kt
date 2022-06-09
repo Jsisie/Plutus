@@ -3,65 +3,64 @@ package fr.esipe.barrouxrodriguez.plutus.model.viewmodel
 import android.app.Application
 import androidx.lifecycle.*
 import fr.esipe.barrouxrodriguez.plutus.model.NoteBookDatabase
+import fr.esipe.barrouxrodriguez.plutus.model.dao.FilterDao
 import fr.esipe.barrouxrodriguez.plutus.model.dao.NameTagDao
 import fr.esipe.barrouxrodriguez.plutus.model.dao.TransactionDao
-import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
-import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
-import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
+import fr.esipe.barrouxrodriguez.plutus.model.entity.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.streams.toList
 
-class TransactionViewModel(application: Application) : AndroidViewModel(application) {
-    val readAllData: LiveData<List<TransactionWithNameTags>>
-    private val transactionDao: TransactionDao =
-        NoteBookDatabase.getInstance(application).TransactionDao()
+class FilterViewModel(application: Application) : AndroidViewModel(application) {
+    val readAllData: LiveData<List<FilterWithNameTags>>
+    private val filterDao: FilterDao =
+        NoteBookDatabase.getInstance(application).FilterDao()
     private val nameTagDao: NameTagDao = NoteBookDatabase.getInstance(application).NameTagDao()
 
     init {
-        readAllData = transactionDao.getAllWithNameTags()
+        readAllData = filterDao.getAllWithNameTags()
     }
 
-    fun findTransactionsById(idTransaction: Int): LiveData<TransactionWithNameTags> {
-        return transactionDao.loadByIdWithNameTags(idTransaction)
+    fun findTransactionsById(idFilter: Int): LiveData<FilterWithNameTags> {
+        return filterDao.loadByIdWithNameTags(idFilter)
     }
 
-    fun insertAll(vararg transaction: Transaction) {
+    fun insert(filter: Filter) {
         viewModelScope.launch(Dispatchers.IO) {
-            transactionDao.insertAll(*transaction)
+            filterDao.insert(filter)
         }
     }
 
-    fun insertWithStrings(transaction: Transaction, nameTagsList: List<String>) {
+    fun insertWithStrings(filter: Filter, nameTagsList: List<String>) {
         viewModelScope.launch(Dispatchers.IO) {
-            val id = transactionDao.insertAll(transaction)[0]
-            val arrayNT = nameTagsList.stream().map { tag -> NameTag(tag, id.toInt()) }.toList()
+            val id = filterDao.insert(filter)
+            val arrayNT = nameTagsList.stream().map { tag -> NameTag(tag, idFilter = id.toInt()) }.toList()
                 .toTypedArray()
 
             nameTagDao.insertAll(*arrayNT)
         }
     }
 
-    fun insertWithNameTags(transaction: Transaction, nameTagsList: List<NameTag>) {
+    fun insertWithNameTags(filter: Filter, nameTagsList: List<NameTag>) {
         viewModelScope.launch(Dispatchers.IO) {
-            val id = transactionDao.insertAll(transaction)[0]
+            val id = filterDao.insert(filter)
             nameTagDao.insertAll(*nameTagsList.toTypedArray())
         }
     }
 
-    fun delete(transaction: TransactionWithNameTags) {
+    fun delete(filter: Filter) {
         viewModelScope.launch(Dispatchers.IO) {
-            transactionDao.delete(transaction.transaction)
+            filterDao.delete(filter)
         }
     }
 
-    class TransactionModelFactory(
+    class FilterModelFactory(
         private val application: Application,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")
-            if (modelClass.isAssignableFrom(TransactionViewModel::class.java)) {
-                return TransactionViewModel(application) as T
+            if (modelClass.isAssignableFrom(FilterViewModel::class.java)) {
+                return FilterViewModel(application) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

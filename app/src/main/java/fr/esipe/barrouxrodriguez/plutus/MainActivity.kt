@@ -14,6 +14,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import fr.esipe.barrouxrodriguez.plutus.model.entity.Filter
+import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.FilterViewModel
 import fr.esipe.barrouxrodriguez.plutus.view.screen.*
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NameTagViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NoteBookViewModel
@@ -60,6 +62,13 @@ class MainActivity : ComponentActivity() {
                         )
                     )
 
+                    filterViewModel = viewModel(
+                        factory =
+                        FilterViewModel.FilterModelFactory(
+                            context.applicationContext as Application
+                        )
+                    )
+
                     NavigationBasicsApp()
                 }
             }
@@ -71,6 +80,7 @@ lateinit var ntViewModel: NameTagViewModel
 lateinit var transactionViewModel: TransactionViewModel
 lateinit var notebookViewModel: NoteBookViewModel
 lateinit var nameTagViewModel: NameTagViewModel
+lateinit var filterViewModel: FilterViewModel
 
 @Composable
 fun NavigationBasicsApp() {

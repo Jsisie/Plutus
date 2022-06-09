@@ -5,19 +5,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import fr.esipe.barrouxrodriguez.plutus.model.dao.BudgetDao
-import fr.esipe.barrouxrodriguez.plutus.model.dao.NameTagDao
-import fr.esipe.barrouxrodriguez.plutus.model.dao.NoteBookDao
-import fr.esipe.barrouxrodriguez.plutus.model.dao.TransactionDao
-import fr.esipe.barrouxrodriguez.plutus.model.entity.Budget
-import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
-import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
-import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
+import fr.esipe.barrouxrodriguez.plutus.model.dao.*
+import fr.esipe.barrouxrodriguez.plutus.model.entity.*
 import fr.esipe.barrouxrodriguez.plutus.utils.Converters
 
 @Database(
     version = 1,
-    entities = [NoteBook::class, NameTag::class, Budget::class, Transaction::class]
+    entities = [NoteBook::class, NameTag::class, Budget::class, Transaction::class, Filter::class]
 )
 
 @TypeConverters(Converters::class)
@@ -26,9 +20,9 @@ abstract class NoteBookDatabase : RoomDatabase() {
     abstract fun NameTagDao(): NameTagDao
     abstract fun NoteBookDao(): NoteBookDao
     abstract fun TransactionDao(): TransactionDao
+    abstract fun FilterDao(): FilterDao
 
     companion object {
-
         // For Singleton instantiation
         @Volatile
         private var instance: NoteBookDatabase? = null
@@ -43,7 +37,7 @@ abstract class NoteBookDatabase : RoomDatabase() {
 
             return Room.databaseBuilder(
                 context.applicationContext,
-                NoteBookDatabase::class.java, "PlutusDB-55"
+                NoteBookDatabase::class.java, "PlutusDB-61"
             ).build()
         }
     }
