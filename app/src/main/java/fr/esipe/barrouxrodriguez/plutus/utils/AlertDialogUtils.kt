@@ -68,7 +68,7 @@ class AlertDialogUtil {
                                     value = textChange.value,
                                     onValueChange = { newText ->
                                         isError.value = false
-                                        if (textChange.value.text.length < maxChar) {
+                                        if (newText.text.length <= maxChar) {
                                             textChange.value = newText
                                         }
                                     })

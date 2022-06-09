@@ -1,4 +1,4 @@
-package fr.esipe.barrouxrodriguez.plutus.controller
+package fr.esipe.barrouxrodriguez.plutus
 
 import android.app.Application
 import android.os.Bundle

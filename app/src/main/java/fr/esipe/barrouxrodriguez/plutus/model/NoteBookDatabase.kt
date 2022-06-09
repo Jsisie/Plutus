@@ -43,7 +43,7 @@ abstract class NoteBookDatabase : RoomDatabase() {
 
             return Room.databaseBuilder(
                 context.applicationContext,
-                NoteBookDatabase::class.java, "PlutusDB"
+                NoteBookDatabase::class.java, "PlutusDB-55"
             ).build()
         }
     }

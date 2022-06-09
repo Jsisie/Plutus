@@ -22,8 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import fr.esipe.barrouxrodriguez.plutus.R
-import fr.esipe.barrouxrodriguez.plutus.controller.notebookViewModel
+
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBook
+import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
 import fr.esipe.barrouxrodriguez.plutus.utils.AlertDialogUtil
 import fr.esipe.barrouxrodriguez.plutus.utils.Converters
 

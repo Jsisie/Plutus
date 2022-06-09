@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import fr.esipe.barrouxrodriguez.plutus.R
-import fr.esipe.barrouxrodriguez.plutus.controller.nameTagViewModel
-import fr.esipe.barrouxrodriguez.plutus.controller.transactionViewModel
+import fr.esipe.barrouxrodriguez.plutus.nameTagViewModel
+import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
 import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
 import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
@@ -45,8 +45,6 @@ import java.util.*
 import kotlin.streams.toList
 
 class TransactionScreen {
-
-
     @OptIn(ExperimentalMaterialApi::class)
     @SuppressLint("NotConstructor")
     @Composable
