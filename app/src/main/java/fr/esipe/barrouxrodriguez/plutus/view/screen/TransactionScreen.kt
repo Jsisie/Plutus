@@ -135,7 +135,6 @@ class TransactionScreen {
                         Text(
                             text = stringResource(id = R.string.transaction),
                             textAlign = TextAlign.Center,
-                            fontSize = 24.sp
                         )
                     }
 
@@ -555,7 +554,6 @@ class TransactionScreen {
                         Text(
                             text = stringResource(id = R.string.create_transaction),
                             textAlign = TextAlign.Center,
-                            fontSize = 24.sp
                         )
                     }
 

@@ -1,14 +1,15 @@
 package fr.esipe.barrouxrodriguez.plutus.view.screen
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
@@ -16,22 +17,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import fr.esipe.barrouxrodriguez.plutus.R
+import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBookWithTransactionsAndBudget
+import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
+import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
 import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
 import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
-import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBookWithTransactionsAndBudget
-import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
-
+import fr.esipe.barrouxrodriguez.plutus.utils.AlertDialogUtil
 import fr.esipe.barrouxrodriguez.plutus.utils.Converters
 
 class NoteBookScreen {
     private val notebookVM = notebookViewModel
 
+    @OptIn(ExperimentalMaterialApi::class)
     @SuppressLint("NotConstructor")
     @Composable
     fun NoteBookScreen(navController: NavController, idNoteBook: Int?) {
@@ -40,6 +44,19 @@ class NoteBookScreen {
         val noteBookWithLists: NoteBookWithTransactionsAndBudget = idNoteBook?.let {
             notebookVM.findNoteBookById(it).observeAsState().value
         } ?: return
+
+        val openDeleteDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
+        var selectedTransaction: MutableState<TransactionWithNameTags> = remember {
+            mutableStateOf(
+                TransactionWithNameTags(
+                    Transaction(
+                        "dummy",
+                        amount_transaction = 0f,
+                        idNotebook = 0
+                    ), emptyList()
+                )
+            )
+        }
 
         Scaffold(
             topBar = {
@@ -158,37 +175,47 @@ class NoteBookScreen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                 )
                 {
+
                     LazyColumn {
-                        noteBookWithLists.listTransaction.size.let { it ->
-                            items(it) { i ->
-                                val transaction: TransactionWithNameTags =
-                                    noteBookWithLists.listTransaction[i]
-                                Button(modifier = Modifier.padding(5.dp),
-                                    onClick = { navController.navigate("transaction_screen/${transaction.transaction.idTransaction}") }) {
-                                    Column {
-                                        Text(text = transaction.transaction.title_transaction)
-                                        // TODO - change it in strings.xml
-                                        Text(text = "${transaction.transaction.amount_transaction} €")
-                                        Text(
-                                            text = Converters.printDate(
-                                                transaction.transaction.date_transaction,
-                                                "yyyy-MM-dd"
-                                            )
+                        items(noteBookWithLists.listTransaction) { transaction ->
+                            Card(
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth()
+                                    .pointerInput(Unit) {
+                                        detectTapGestures(onLongPress = {
+                                            selectedTransaction.value = transaction
+                                            openDeleteDialog.value = true
+                                        },
+                                            onTap = {
+                                                navController.navigate("transaction_screen/${transaction.transaction.idTransaction}")
+                                            })
+                                    },
+                                elevation = 5.dp
+                            ) {
+                                Column {
+                                    Text(text = transaction.transaction.title_transaction)
+                                    // TODO - change it in strings.xml
+                                    Text(text = "${transaction.transaction.amount_transaction} €")
+                                    Text(
+                                        text = Converters.printDate(
+                                            transaction.transaction.date_transaction,
+                                            "yyyy-MM-dd"
                                         )
-                                        Button(onClick = {
-                                            transactionViewModel.delete(transaction)
-                                        }) {
-                                            Icon(
-                                                Icons.Filled.Delete,
-                                                contentDescription = "yeetusDeletusTransactius"
-                                            )
-                                        }
-                                    }
+                                    )
                                 }
                             }
                         }
                     }
                 }
+
+                //Delete Transaction
+                AlertDialogUtil.ShowAlertDialog(
+                    openDialog = openDeleteDialog,
+                    title = "Delete Transaction",
+                    onConfirmClick = { _, _ -> transactionViewModel.delete(selectedTransaction.value) },
+                    isTextFieldValue = false
+                )
             }
         }
     }
