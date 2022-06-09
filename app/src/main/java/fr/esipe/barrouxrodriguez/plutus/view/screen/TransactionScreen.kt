@@ -2,7 +2,6 @@ package fr.esipe.barrouxrodriguez.plutus.view.screen
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.util.Log
 import android.widget.DatePicker
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -34,14 +33,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import fr.esipe.barrouxrodriguez.plutus.R
-import fr.esipe.barrouxrodriguez.plutus.nameTagViewModel
-import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
 import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
 import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
+import fr.esipe.barrouxrodriguez.plutus.nameTagViewModel
+import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
 import fr.esipe.barrouxrodriguez.plutus.utils.AlertDialogUtil
 import fr.esipe.barrouxrodriguez.plutus.utils.Converters
 import java.util.*
+import java.util.function.Predicate
 import kotlin.streams.toList
 
 class TransactionScreen {
@@ -68,14 +68,14 @@ class TransactionScreen {
 
         val isAmountError: MutableState<Boolean> = remember { mutableStateOf(false) }
 
-        val nameTagList: MutableList<String> = remember {
-            mutableStateListOf()
+        val actualTagMap: MutableMap<NameTag, NameTag> = remember {
+            mutableStateMapOf<NameTag, NameTag>()
         }
 
         val openNameTagDialog: MutableState<Boolean> = remember {
             mutableStateOf(false)
         }
-        val customTags = nameTagViewModel.readAllPredefined.observeAsState(emptyList()).value
+        val customTags = nameTagViewModel.readAllCustomPredefined.observeAsState(emptyList()).value
 
         var year: Int
         var month: Int
@@ -98,7 +98,7 @@ class TransactionScreen {
                     "yyyy-MM-dd"
                 )
             )
-        }        // Declaring DatePickerDialog and setting
+        }           // Declaring DatePickerDialog and setting
         // initial values as current values (present year, month and day)
         val mDatePickerDialog = DatePickerDialog(
             LocalContext.current,
@@ -155,7 +155,7 @@ class TransactionScreen {
                                 if (transaction != null) {
                                     transactionViewModel.insertWithStrings(
                                         transaction,
-                                        nameTagList
+                                        actualTagMap.keys.stream().map { tag -> tag.titleNameTag }.toList()
                                     )
                                 }
                                 navController.navigate("notebook_screen/$idNoteBook")
@@ -209,136 +209,95 @@ class TransactionScreen {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1 / 2f)
+                            .weight(1 / 3f)
                     ) {
+
                         Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = "Predefined Tags:", textAlign = TextAlign.Center)
+                            Text(
+                                text = "Transaction's tags:",
+                                textAlign = TextAlign.Center
+                            )
                             LazyHorizontalGrid(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(5.dp),
                                 rows = GridCells.Fixed(2)
                             ) {
-                                items(nameTagViewModel.predefTags.sorted()) { tag ->
-                                    val selected = tag in nameTagList
+                                items(actualTagMap.keys.stream().sorted().toList()) { tag ->
                                     Card(
                                         modifier = Modifier
-                                            .width(80.dp)
+                                            .width(120.dp)
                                             .height(45.dp)
                                             .padding(2.dp),
                                         elevation = 5.dp,
                                         onClick = {
-                                            if (selected) {
-                                                nameTagList.remove(tag)
-                                            } else {
-                                                nameTagList.add(tag)
-                                            }
+                                            actualTagMap.remove(tag)
                                         },
-                                        backgroundColor = if (selected) Color(
-                                            67,
-                                            193,
-                                            215
-                                        ) else Color.LightGray,
+                                        backgroundColor = Color.LightGray,
                                         content = {
                                             Column(
-                                                Modifier.fillMaxSize(),
                                                 horizontalAlignment = Alignment.CenterHorizontally,
                                                 verticalArrangement = Arrangement.Center
                                             ) {
                                                 Text(
-                                                    text = tag,
+                                                    text = tag.titleNameTag,
                                                     textAlign = TextAlign.Center,
-                                                    fontSize = 15.sp
+                                                    fontSize = 15.sp,
+                                                    color = Color.Black
                                                 )
                                             }
                                         })
                                 }
                             }
                         }
+
                     }
 
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1 / 2f)
+                            .weight(1 / 3f)
                     ) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(text = "Custom Tags:", textAlign = TextAlign.Center)
-                            LazyHorizontalGrid(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(5.dp),
-                                rows = GridCells.Fixed(2)
-                            ) {
-                                items(customTags.sorted()) { tag ->
-                                    val selected = tag.titleNameTag in nameTagList
-                                    Log.d("aled", "$tag")
-                                    Card(
-                                        modifier = Modifier
-                                            .width(80.dp)
-                                            .height(45.dp)
-                                            .padding(2.dp)
-                                            .pointerInput(Unit) {
-                                                detectTapGestures(
-                                                    onLongPress = {
-                                                        nameTagViewModel.delete(tag)
-                                                        nameTagList.remove(tag.titleNameTag)
-                                                    },
-                                                    onTap = {
-                                                        Log.d("aled", "$selected")
-                                                        if (tag.titleNameTag in nameTagList) {
-                                                            nameTagList.remove(tag.titleNameTag)
-                                                        } else {
-                                                            Log.d(
-                                                                "aled",
-                                                                nameTagList.joinToString(", ")
-                                                            )
-                                                            nameTagList.add(tag.titleNameTag)
-                                                            Log.d(
-                                                                "aled",
-                                                                nameTagList.joinToString(",")
-                                                            )
-                                                        }
-                                                    }
-                                                )
-                                            },
-                                        elevation = 5.dp,
-                                        backgroundColor = if (selected) Color(
-                                            67,
-                                            193,
-                                            215
-                                        ) else Color.LightGray,
-                                        content = {
-                                            Column(
-                                                Modifier.fillMaxSize(),
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                verticalArrangement = Arrangement.Center
-                                            ) {
-                                                Row(
-                                                    Modifier.fillMaxSize(),
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    Text(
-                                                        modifier = Modifier
-                                                            .padding(5.dp),
-                                                        text = tag.titleNameTag,
-                                                        textAlign = TextAlign.Center,
-                                                        fontSize = 15.sp
-                                                    )
-                                                }
-                                            }
-                                        })
-                                }
+
+                        ShowListOfNameTags(
+                            title = "Predefined Tags",
+                            tags = nameTagViewModel.predefTags,
+                            onTap = { tag ->
+                                val newTag = NameTag(tag.titleNameTag, null, false)
+                                actualTagMap[newTag] = newTag
+                            },
+                            selected = { tag ->
+                                tag in actualTagMap.keys
                             }
-                        }
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1 / 3f)
+                    ) {
+
+                        ShowListOfNameTags(
+                            title = "Custom Tags",
+                            tags = customTags,
+                            onLongPress = { tag ->
+                                nameTagViewModel.delete(tag)
+                            },
+                            onTap = { tag ->
+                                val newTag = NameTag(tag.titleNameTag, null, false)
+                                actualTagMap[newTag] = newTag
+                            },
+                            selected = { tag ->
+                                tag in actualTagMap.keys
+                            }
+                        )
                     }
                 }
+
                 AlertDialogUtil.ShowAlertDialog(
                     openDialog = openNameTagDialog,
                     title = stringResource(id = R.string.create_name_tag),
@@ -353,6 +312,64 @@ class TransactionScreen {
                         }
                     }
                 )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    @Composable
+    private fun ShowListOfNameTags(
+        title: String,
+        tags: List<NameTag>,
+        onLongPress: ((NameTag) -> Unit) = {},
+        onTap: ((NameTag) -> Unit),
+        selected: Predicate<NameTag>,
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = "$title :", textAlign = TextAlign.Center)
+            LazyHorizontalGrid(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp),
+                rows = GridCells.Fixed(2)
+            ) {
+                items(tags) { tag ->
+                    Card(
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(45.dp)
+                            .padding(2.dp)
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onLongPress = {
+                                        onLongPress.invoke(tag)
+                                    },
+                                    onTap = {
+                                        onTap.invoke(tag)
+                                    }
+                                )
+                            },
+                        elevation = 5.dp,
+                        backgroundColor = Color.LightGray,
+                        content = {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = tag.titleNameTag,
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 15.sp,
+                                    color = if (selected.test(tag)) Color(
+                                        66,
+                                        66,
+                                        66,
+                                        128
+                                    ) else Color.Black
+                                )
+                            }
+                        })
+                }
             }
         }
     }
@@ -474,7 +491,9 @@ class TransactionScreen {
 
         val actualTagMap: MutableMap<NameTag, NameTag> = remember {
             val map = mutableStateMapOf<NameTag, NameTag>()
+
             transactionWithNameTags.nameTags.forEach { nameTag -> map[nameTag] = nameTag }
+
             map
         }
 
@@ -482,7 +501,7 @@ class TransactionScreen {
             mutableStateOf(false)
         }
 
-        val customTags = nameTagViewModel.readAllPredefined.observeAsState(emptyList()).value
+        val customTags = nameTagViewModel.readAllCustomPredefined.observeAsState(emptyList()).value
 
         val year: Int
         val month: Int
@@ -619,6 +638,7 @@ class TransactionScreen {
                             .fillMaxWidth()
                             .weight(1 / 3f)
                     ) {
+
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.fillMaxWidth()
@@ -636,7 +656,7 @@ class TransactionScreen {
                                 items(actualTagMap.keys.stream().sorted().toList()) { tag ->
                                     Card(
                                         modifier = Modifier
-                                            .width(80.dp)
+                                            .width(120.dp)
                                             .height(45.dp)
                                             .padding(2.dp),
                                         elevation = 5.dp,
@@ -652,13 +672,15 @@ class TransactionScreen {
                                                 Text(
                                                     text = tag.titleNameTag,
                                                     textAlign = TextAlign.Center,
-                                                    fontSize = 15.sp
+                                                    fontSize = 15.sp,
+                                                    color = Color.Black
                                                 )
                                             }
                                         })
                                 }
                             }
                         }
+
                     }
 
                     Box(
@@ -666,48 +688,20 @@ class TransactionScreen {
                             .fillMaxWidth()
                             .weight(1 / 3f)
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            //TODO string.xml
-                            Text(text = "Predefined Tags:", textAlign = TextAlign.Center)
-                            LazyHorizontalGrid(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(5.dp),
-                                rows = GridCells.Fixed(2)
-                            ) {
-                                items(nameTagViewModel.predefTags) { tag ->
-                                    Card(modifier = Modifier
-                                        .width(80.dp)
-                                        .height(45.dp)
-                                        .padding(2.dp),
-                                        onClick = {
-                                            val newTag =
-                                                NameTag(tag, transaction.idTransaction)
-                                            actualTagMap[newTag] = newTag
-                                        },
-                                        backgroundColor = Color.LightGray,
-                                        content = {
-                                            Column(
-                                                Modifier.fillMaxSize(),
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                verticalArrangement = Arrangement.Center
-                                            ) {
-                                                Text(
-                                                    text = tag,
-                                                    textAlign = TextAlign.Center,
-                                                    fontSize = 15.sp,
-                                                    color = if (tag in actualTagMap.keys.map { tag -> tag.titleNameTag }) Color(
-                                                        0,
-                                                        0,
-                                                        0,
-                                                        128
-                                                    ) else Color.Black
-                                                )
-                                            }
-                                        })
-                                }
+
+
+                        ShowListOfNameTags(
+                            title = "Predefined Tags",
+                            tags = nameTagViewModel.predefTags,
+                            onTap = { tag ->
+                                val newTag =
+                                    tag.copyWithNewTransaction(transaction.idTransaction)
+                                actualTagMap[newTag] = newTag
+                            },
+                            selected = { tag ->
+                                tag in actualTagMap.keys
                             }
-                        }
+                        )
                     }
 
                     Box(
@@ -715,60 +709,25 @@ class TransactionScreen {
                             .fillMaxWidth()
                             .weight(1 / 3f)
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "Custom Tags:", textAlign = TextAlign.Center)
-                            LazyHorizontalGrid(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(5.dp),
-                                rows = GridCells.Fixed(2)
 
-                            ) {
-                                items(customTags) { tag ->
-                                    Card(
-                                        modifier = Modifier
-                                            .width(80.dp)
-                                            .height(45.dp)
-                                            .padding(2.dp)
-                                            .pointerInput(Unit) {
-                                                detectTapGestures(
-                                                    onLongPress = {
-                                                        nameTagViewModel.delete(tag)
-                                                        actualTagMap.remove(tag)
-                                                    },
-                                                    onTap = {
-                                                        val newTag =
-                                                            NameTag(
-                                                                tag.titleNameTag,
-                                                                transaction.idTransaction
-                                                            )
-                                                        actualTagMap[newTag] = newTag
-                                                    }
-                                                )
-                                            },
-                                        elevation = 5.dp,
-                                        backgroundColor = Color.LightGray,
-                                        content = {
-                                            Column(
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                verticalArrangement = Arrangement.Center
-                                            ) {
-                                                Text(
-                                                    text = tag.titleNameTag,
-                                                    textAlign = TextAlign.Center,
-                                                    fontSize = 15.sp,
-                                                    color = if (tag.titleNameTag in actualTagMap.keys.map { tag -> tag.titleNameTag }) Color(
-                                                        0,
-                                                        0,
-                                                        0,
-                                                        128
-                                                    ) else Color.Black
-                                                )
-                                            }
-                                        })
-                                }
+                        ShowListOfNameTags(
+                            title = "Custom Tags",
+                            tags = customTags,
+                            onLongPress = { tag ->
+                                nameTagViewModel.delete(tag)
+                            },
+                            onTap = { tag ->
+                                val newTag =
+                                    NameTag(
+                                        tag.titleNameTag,
+                                        transaction.idTransaction
+                                    )
+                                actualTagMap[newTag] = newTag
+                            },
+                            selected = { tag ->
+                                tag in actualTagMap.keys
                             }
-                        }
+                        )
                     }
                 }
 

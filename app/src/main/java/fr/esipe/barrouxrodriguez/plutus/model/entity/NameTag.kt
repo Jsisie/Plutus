@@ -24,6 +24,10 @@ data class NameTag(
         return titleNameTag.compareTo(other.titleNameTag)
     }
 
+    fun copyWithNewTransaction(idTransaction: Int): NameTag{
+        return NameTag(titleNameTag, idTransaction, false)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -31,17 +35,11 @@ data class NameTag(
         other as NameTag
 
         if (titleNameTag != other.titleNameTag) return false
-        if (idTransaction != other.idTransaction) return false
-        if (isPredefined != other.isPredefined) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = titleNameTag.hashCode()
-        result = 31 * result + (idTransaction ?: 0)
-        result = 31 * result + isPredefined.hashCode()
-        return result
+        return titleNameTag.hashCode()
     }
-
 }

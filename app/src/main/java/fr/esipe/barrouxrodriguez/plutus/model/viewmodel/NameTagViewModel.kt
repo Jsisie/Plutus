@@ -10,13 +10,19 @@ import kotlinx.coroutines.launch
 
 class NameTagViewModel(application: Application) : AndroidViewModel(application) {
     val readAllData: LiveData<List<NameTag>>
-    val readAllPredefined: LiveData<List<NameTag>>
-    val predefTags: List<String> = listOf("-food", "-car", "+wage", "+interest", "=standard")
+    val readAllCustomPredefined: LiveData<List<NameTag>>
+    //    val predefTags: List<NameTag> = listOf(NameTag("-food", null, 1),
+    //        "-car", "+wage", "+interest", "=standard")
+    val predefTags: List<NameTag> = listOf(NameTag("-food", null, true),
+        NameTag("-car", null, true),
+        NameTag("+wage", null, true),
+        NameTag("+interest", null, true),
+        NameTag("=standard", null, true))
     private var nameTagDao: NameTagDao = NoteBookDatabase.getInstance(application).NameTagDao()
 
     init {
         readAllData = nameTagDao.getAll()
-        readAllPredefined = nameTagDao.getAllPredefined()
+        readAllCustomPredefined = nameTagDao.getAllPredefined()
     }
 
     fun insertAll(vararg nameTag: NameTag) {
