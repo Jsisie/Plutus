@@ -59,6 +59,7 @@ class AlertDialogUtil {
                 AlertDialog(
                     onDismissRequest = {
                         openDialog.value = false
+                        textChange.value = TextFieldValue("");
                     },
                     title = { Text(text = title) },
                     text = {
@@ -86,6 +87,7 @@ class AlertDialogUtil {
                     confirmButton = {
                         Button(onClick = {
                             onConfirmClick.invoke(textChange.value.text, isError)
+                            textChange.value = TextFieldValue("");
                             openDialog.value = false
                             isError.value = false
                         }) {
@@ -95,6 +97,7 @@ class AlertDialogUtil {
                     dismissButton = {
                         Button(onClick = {
                             onDismissClick.invoke()
+                            textChange.value = TextFieldValue("");
                             openDialog.value = false
                             isError.value = false
                         }) {

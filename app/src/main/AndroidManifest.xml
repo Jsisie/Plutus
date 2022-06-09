@@ -10,9 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Plutus">
         <activity
-            android:name=".controller.MainActivity"
+            android:name="MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Plutus">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
