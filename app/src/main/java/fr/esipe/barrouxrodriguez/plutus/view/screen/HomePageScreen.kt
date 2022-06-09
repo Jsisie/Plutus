@@ -171,6 +171,7 @@ class HomePageScreen {
             AlertDialogUtil.ShowAlertDialog(
                 openDialog = openEditDialog,
                 title = stringResource(id = R.string.edit_notebook_name),
+                text = selectedNoteBook.value.titleNoteBook,
                 confirmText = stringResource(id = R.string.modify_notebook),
                 dismissText = stringResource(id = R.string.cancel),
                 onConfirmClick = { text, isError ->

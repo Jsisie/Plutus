@@ -37,6 +37,7 @@ class AlertDialogUtil {
         fun ShowAlertDialog(
             openDialog: MutableState<Boolean>,
             title: String,
+            text: String = "",
             confirmText: String = stringResource(id = R.string.yes),
             dismissText: String = stringResource(id = R.string.no),
             onConfirmClick: (text: String, isError: MutableState<Boolean>) -> Unit = { text, _ ->
@@ -51,15 +52,17 @@ class AlertDialogUtil {
             isTextFieldValue: Boolean = true,
         ) {
 
-
             val isError: MutableState<Boolean> = remember { mutableStateOf(false) }
             val textChange: MutableState<TextFieldValue> =
                 remember { mutableStateOf(TextFieldValue("")) }
+            if(text.isNotEmpty()){
+                textChange.value = TextFieldValue(text);
+            }
             if (openDialog.value) {
                 AlertDialog(
                     onDismissRequest = {
                         openDialog.value = false
-                        textChange.value = TextFieldValue("");
+                        textChange.value = TextFieldValue("")
                     },
                     title = { Text(text = title) },
                     text = {
@@ -87,7 +90,7 @@ class AlertDialogUtil {
                     confirmButton = {
                         Button(onClick = {
                             onConfirmClick.invoke(textChange.value.text, isError)
-                            textChange.value = TextFieldValue("");
+                            textChange.value = TextFieldValue("")
                             openDialog.value = false
                             isError.value = false
                         }) {
@@ -97,7 +100,7 @@ class AlertDialogUtil {
                     dismissButton = {
                         Button(onClick = {
                             onDismissClick.invoke()
-                            textChange.value = TextFieldValue("");
+                            textChange.value = TextFieldValue("")
                             openDialog.value = false
                             isError.value = false
                         }) {
