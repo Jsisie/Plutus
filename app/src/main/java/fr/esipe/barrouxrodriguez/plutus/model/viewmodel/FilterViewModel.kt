@@ -21,7 +21,7 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
         readAllData = filterDao.getAllWithNameTags()
     }
 
-    fun findTransactionsById(idFilter: Int): LiveData<FilterWithNameTags> {
+    fun findFilterById(idFilter: Int): LiveData<FilterWithNameTags> {
         return filterDao.loadByIdWithNameTags(idFilter)
     }
 

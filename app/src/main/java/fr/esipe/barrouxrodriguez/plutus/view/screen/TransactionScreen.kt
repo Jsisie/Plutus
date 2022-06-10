@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.widget.DatePicker
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
@@ -23,7 +22,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -38,10 +36,9 @@ import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
 import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
 import fr.esipe.barrouxrodriguez.plutus.nameTagViewModel
 import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
-import fr.esipe.barrouxrodriguez.plutus.utils.UIUtils
 import fr.esipe.barrouxrodriguez.plutus.utils.Converters
+import fr.esipe.barrouxrodriguez.plutus.utils.UIUtils
 import java.util.*
-import java.util.function.Predicate
 import kotlin.streams.toList
 
 class TransactionScreen {
@@ -154,7 +151,8 @@ class TransactionScreen {
                                 if (transaction != null) {
                                     transactionViewModel.insertWithStrings(
                                         transaction,
-                                        actualTagMap.keys.stream().map { tag -> tag.titleNameTag }.toList()
+                                        actualTagMap.keys.stream().map { tag -> tag.titleNameTag }
+                                            .toList()
                                     )
                                 }
                                 navController.navigate("notebook_screen/$idNoteBook")
@@ -268,8 +266,13 @@ class TransactionScreen {
                                 val newTag = NameTag(tag.titleNameTag, null, false)
                                 actualTagMap[newTag] = newTag
                             },
-                            selected = { tag ->
-                                tag in actualTagMap.keys
+                            color = { tag ->
+                                if (tag in actualTagMap.keys) Color(
+                                    66,
+                                    66,
+                                    66,
+                                    128
+                                ) else Color.Black
                             }
                         )
                     }
@@ -290,8 +293,13 @@ class TransactionScreen {
                                 val newTag = NameTag(tag.titleNameTag, null, false)
                                 actualTagMap[newTag] = newTag
                             },
-                            selected = { tag ->
-                                tag in actualTagMap.keys
+                            color = { tag ->
+                                if (tag in actualTagMap.keys) Color(
+                                    66,
+                                    66,
+                                    66,
+                                    128
+                                ) else Color.Black
                             }
                         )
                     }
@@ -316,7 +324,7 @@ class TransactionScreen {
     }
 
     @Composable
-    fun  ShowTransactionContent(
+    fun ShowTransactionContent(
         titleTransaction: MutableState<TextFieldValue>,
         isTitleError: MutableState<Boolean>,
         amountTransaction: MutableState<TextFieldValue>,
@@ -400,7 +408,6 @@ class TransactionScreen {
             Spacer(modifier = Modifier.weight(1 / 5f))
         }
     }
-
 
 
     @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
@@ -638,8 +645,13 @@ class TransactionScreen {
                                     tag.copyWithNewTransaction(transaction.idTransaction)
                                 actualTagMap[newTag] = newTag
                             },
-                            selected = { tag ->
-                                tag in actualTagMap.keys
+                            color = { tag ->
+                                if (tag in actualTagMap.keys) Color(
+                                    66,
+                                    66,
+                                    66,
+                                    128
+                                ) else Color.Black
                             }
                         )
                     }
@@ -664,8 +676,13 @@ class TransactionScreen {
                                     )
                                 actualTagMap[newTag] = newTag
                             },
-                            selected = { tag ->
-                                tag in actualTagMap.keys
+                            color = { tag ->
+                                if (tag in actualTagMap.keys) Color(
+                                    66,
+                                    66,
+                                    66,
+                                    128
+                                ) else Color.Black
                             }
                         )
                     }

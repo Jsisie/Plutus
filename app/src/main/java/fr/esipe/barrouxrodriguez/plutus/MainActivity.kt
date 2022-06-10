@@ -14,13 +14,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import fr.esipe.barrouxrodriguez.plutus.model.entity.Filter
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.FilterViewModel
-import fr.esipe.barrouxrodriguez.plutus.view.screen.*
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NameTagViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.NoteBookViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.viewmodel.TransactionViewModel
 import fr.esipe.barrouxrodriguez.plutus.ui.theme.PlutusTheme
+import fr.esipe.barrouxrodriguez.plutus.view.screen.*
 
 class MainActivity : ComponentActivity() {
 
@@ -89,13 +88,30 @@ fun NavigationBasicsApp() {
     val homePageScreen = HomePageScreen()
     val transactionScreen = TransactionScreen()
     val budgetScreen = BudgetScreen()
+    val filterScreen = FilterScreen()
 
     NavHost(navController = navController, startDestination = "homepage_screen") {
         composable("homepage_screen") { homePageScreen.HomePageScreen(navController) }
 
         composable("notebook_screen/{idNoteBook}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("idNoteBook")
-            noteBookScreen.NoteBookScreen(navController, id?.toInt())
+            noteBookScreen.NoteBookScreen(navController, id?.toInt(), null)
+        }
+
+        composable("notebook_screen/{idNoteBook}_{idFilter}") { backStackEntry ->
+            val idNoteBook = backStackEntry.arguments?.getString("idNoteBook")
+            val idFilter = backStackEntry.arguments?.getString("idFilter")
+            noteBookScreen.NoteBookScreen(navController, idNoteBook?.toInt(), idFilter?.toInt())
+        }
+
+        composable("filter_screen/{idNoteBook}_{idFilter}") { backStackEntry ->
+            val idNoteBook = backStackEntry.arguments?.getString("idNoteBook") ?: "0"
+            val idFilter = backStackEntry.arguments?.getString("idFilter")
+            filterScreen.FilterScreen(
+                navController = navController,
+                idNoteBook.toInt(),
+                idFilter?.toInt()
+            )
         }
 
         composable("add_transaction_screen/{idNoteBook}") { backStackEntry ->

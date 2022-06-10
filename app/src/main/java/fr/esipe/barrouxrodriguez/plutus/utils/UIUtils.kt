@@ -137,7 +137,8 @@ class UIUtils {
             tagHeight: Dp = 45.dp,
             onLongPress: ((NameTag) -> Unit) = {},
             onTap: ((NameTag) -> Unit),
-            selected: Predicate<NameTag>,
+            color: ((NameTag) -> Color),
+            backgroundColor: ((NameTag) -> Color) = {_ -> Color.LightGray}
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(text = "$title :", textAlign = TextAlign.Center, fontSize = titleSize)
@@ -164,7 +165,7 @@ class UIUtils {
                                     )
                                 },
                             elevation = 5.dp,
-                            backgroundColor = Color.LightGray,
+                            backgroundColor = backgroundColor.invoke(tag),
                             content = {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -174,12 +175,7 @@ class UIUtils {
                                         text = tag.titleNameTag,
                                         textAlign = TextAlign.Center,
                                         fontSize = tagsSize,
-                                        color = if (selected.test(tag)) Color(
-                                            66,
-                                            66,
-                                            66,
-                                            128
-                                        ) else Color.Black
+                                        color = color.invoke(tag)
                                     )
                                 }
                             })

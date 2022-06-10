@@ -10,6 +10,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
@@ -17,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -24,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import fr.esipe.barrouxrodriguez.plutus.R
+import fr.esipe.barrouxrodriguez.plutus.filterViewModel
 import fr.esipe.barrouxrodriguez.plutus.model.entity.NoteBookWithTransactionsAndBudget
 import fr.esipe.barrouxrodriguez.plutus.model.entity.Transaction
 import fr.esipe.barrouxrodriguez.plutus.model.entity.TransactionWithNameTags
@@ -31,6 +35,7 @@ import fr.esipe.barrouxrodriguez.plutus.notebookViewModel
 import fr.esipe.barrouxrodriguez.plutus.transactionViewModel
 import fr.esipe.barrouxrodriguez.plutus.utils.Converters
 import fr.esipe.barrouxrodriguez.plutus.utils.UIUtils
+import kotlin.streams.toList
 
 class NoteBookScreen {
     private val notebookVM = notebookViewModel
@@ -38,15 +43,24 @@ class NoteBookScreen {
     @OptIn(ExperimentalMaterialApi::class)
     @SuppressLint("NotConstructor")
     @Composable
-    fun NoteBookScreen(navController: NavController, idNoteBook: Int?) {
+    fun NoteBookScreen(navController: NavController, idNoteBook: Int?, idFilter: Int?) {
         val openAddDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
+        val filter: MutableState<(TransactionWithNameTags) -> Boolean> = remember {
+            mutableStateOf({ _ -> true })
+        }
+
+        filter.value = idFilter?.let {
+            filterViewModel.findFilterById(idFilter).observeAsState().value?.let {
+                { transaction -> it.test(transaction) }
+            } ?: { _ -> true }
+        } ?: { _ -> true }
 
         val noteBookWithLists: NoteBookWithTransactionsAndBudget = idNoteBook?.let {
             notebookVM.findNoteBookById(it).observeAsState().value
         } ?: return
 
         val openDeleteDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
-        var selectedTransaction: MutableState<TransactionWithNameTags> = remember {
+        val selectedTransaction: MutableState<TransactionWithNameTags> = remember {
             mutableStateOf(
                 TransactionWithNameTags(
                     Transaction(
@@ -57,7 +71,6 @@ class NoteBookScreen {
                 )
             )
         }
-
         Scaffold(
             topBar = {
                 TopAppBar(Modifier.fillMaxWidth()) {
@@ -74,7 +87,6 @@ class NoteBookScreen {
                             )
                         }
                     }
-
                     Column(
                         Modifier
                             .fillMaxSize()
@@ -90,6 +102,23 @@ class NoteBookScreen {
                     }
 
                     Spacer(Modifier.weight(1f / 3f))
+                    Button(onClick = {
+                        filter.value = {_ -> true}
+                    }) {
+                        Icon(
+                            Icons.Filled.Clear,
+                            "Clear Filter"
+                        )
+                    }
+
+                    Button(onClick = {
+
+                    }) {
+                        Icon(
+                            Icons.Filled.Search,
+                            "Select Filter"
+                        )
+                    }
                 }
             },
             floatingActionButton = {
@@ -107,7 +136,6 @@ class NoteBookScreen {
             },
             isFloatingActionButtonDocked = true,
             bottomBar = {
-
                 BottomAppBar(
                     cutoutShape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50))
                 ) {
@@ -175,9 +203,11 @@ class NoteBookScreen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                 )
                 {
-
                     LazyColumn {
-                        items(noteBookWithLists.listTransaction) { transaction ->
+                        items(
+                            noteBookWithLists.listTransaction.stream()
+                                .filter { transaction -> filter.value.invoke(transaction) }.toList()
+                        ){ transaction ->
                             Card(
                                 modifier = Modifier
                                     .padding(5.dp)
@@ -205,10 +235,12 @@ class NoteBookScreen {
                                             )
                                         )
                                     }
-                                    Box(modifier = Modifier
-                                        .height(80.dp)
-                                        .fillMaxWidth()
-                                        .weight(0.7f)) {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(80.dp)
+                                            .fillMaxWidth()
+                                            .weight(0.7f)
+                                    ) {
                                         UIUtils.ShowListOfNameTags(
                                             title = "Transaction's tags",
                                             titleSize = 12.sp,
@@ -217,7 +249,17 @@ class NoteBookScreen {
                                             tagWidth = 120.dp,
                                             tagHeight = 15.dp,
                                             onTap = {},
-                                            selected = { false }
+                                            color = { _ -> Color.Black },
+                                            backgroundColor = { tag ->
+                                                when (tag.titleNameTag[0]) {
+                                                    '-' -> Color(239, 83, 80, 255)
+                                                    '+' -> Color(174, 213, 129, 255)
+                                                    '=' -> Color(128, 222, 234, 255)
+                                                    else -> {
+                                                        Color.Gray
+                                                    }
+                                                }
+                                            }
                                         )
                                     }
                                 }
