@@ -39,7 +39,6 @@ import kotlin.streams.toList
 
 class NoteBookScreen {
     private val notebookVM = notebookViewModel
-
     @OptIn(ExperimentalMaterialApi::class)
     @SuppressLint("NotConstructor")
     @Composable
@@ -49,8 +48,10 @@ class NoteBookScreen {
             mutableStateOf({ _ -> true })
         }
 
+        var actualFilter = idFilter?.let { filterViewModel.findFilterById(it).observeAsState().value }
+
         filter.value = idFilter?.let {
-            filterViewModel.findFilterById(idFilter).observeAsState().value?.let {
+            actualFilter?.let {
                 { transaction -> it.test(transaction) }
             } ?: { _ -> true }
         } ?: { _ -> true }
@@ -104,6 +105,7 @@ class NoteBookScreen {
                     Spacer(Modifier.weight(1f / 3f))
                     Button(onClick = {
                         filter.value = {_ -> true}
+                        actualFilter = null
                     }) {
                         Icon(
                             Icons.Filled.Clear,
@@ -112,7 +114,7 @@ class NoteBookScreen {
                     }
 
                     Button(onClick = {
-
+                        navController.navigate("filter_screen_choice/${idNoteBook}")
                     }) {
                         Icon(
                             Icons.Filled.Search,
@@ -182,7 +184,7 @@ class NoteBookScreen {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     // TODO - change it in strings.xml
-                    text = String.format("%.2f €", noteBookWithLists.listTransaction.stream()
+                    text = String.format("%.2f €", noteBookWithLists.listTransaction.stream().filter { transaction -> filter.value.invoke(transaction) }
                         .mapToDouble { transaction -> transaction.transaction.amount_transaction.toDouble() }
                         ?.sum()?.toFloat()),
                     fontSize = 50.sp,
@@ -195,6 +197,14 @@ class NoteBookScreen {
                     fontSize = 30.sp,
                     textAlign = TextAlign.Center
                 )
+                if(actualFilter != null) {
+                    Text(
+                        "Actual filter: $actualFilter",
+                        modifier = Modifier.fillMaxWidth(),
+                        fontSize = 15.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
 
                 Column(
                     modifier = Modifier

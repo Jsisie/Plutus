@@ -114,6 +114,23 @@ fun NavigationBasicsApp() {
             )
         }
 
+        composable("filter_screen/{idNoteBook}") { backStackEntry ->
+            val idNoteBook = backStackEntry.arguments?.getString("idNoteBook") ?: "0"
+            filterScreen.FilterScreen(
+                navController = navController,
+                idNoteBook.toInt(),
+                null
+            )
+        }
+
+        composable("filter_screen_choice/{idNoteBook}") { backStackEntry ->
+            val idNoteBook = backStackEntry.arguments?.getString("idNoteBook") ?: "0"
+            filterScreen.ShowListOfFilter(
+                navController = navController,
+                idNoteBook.toInt()
+            )
+        }
+
         composable("add_transaction_screen/{idNoteBook}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("idNoteBook")
             transactionScreen.AddNameTagToTransaction(navController, id?.toInt())

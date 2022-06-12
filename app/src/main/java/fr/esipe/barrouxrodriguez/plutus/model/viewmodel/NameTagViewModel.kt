@@ -11,8 +11,6 @@ import kotlinx.coroutines.launch
 class NameTagViewModel(application: Application) : AndroidViewModel(application) {
     val readAllData: LiveData<List<NameTag>>
     val readAllCustomPredefined: LiveData<List<NameTag>>
-    //    val predefTags: List<NameTag> = listOf(NameTag("-food", null, 1),
-    //        "-car", "+wage", "+interest", "=standard")
     val predefTags: List<NameTag> = listOf(NameTag("-food", null, true),
         NameTag("-car", null, true),
         NameTag("+wage", null, true),

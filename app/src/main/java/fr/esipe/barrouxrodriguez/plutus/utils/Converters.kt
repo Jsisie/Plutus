@@ -6,10 +6,10 @@ import java.util.*
 
 class Converters {
     @TypeConverter
-    fun dateToLong(date: Date): Long = date.time
+    fun dateToLong(date: Date?): Long? = date?.time
 
     @TypeConverter
-    fun longToDate(value: Long): Date = Date(value)
+    fun longToDate(value: Long?): Date? = value?.let { Date(it) }
 
     companion object {
         fun printDate(date: Date, pattern: String): String {

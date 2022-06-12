@@ -6,13 +6,13 @@ import java.util.*
 
 @Entity
 data class Filter(
-    val title: String?,
-    val amountSuperior: Float?,
-    val amountEqual: Float?,
-    val amountInferior: Float?,
-    val dateAfter: Date?,
-    val dateEqual: Date?,
-    val dateBefore: Date?,
+    val title: String? = null,
+    val amountSuperior: Float? = null,
+    val amountEqual: Float? = null,
+    val amountInferior: Float? = null,
+    val dateAfter: Date? = null,
+    val dateEqual: Date? = null,
+    val dateBefore: Date? = null,
     @PrimaryKey(autoGenerate = true) val idFilter: Int = 0,
 ) {
     fun test(transaction: Transaction): Boolean {
@@ -21,7 +21,7 @@ data class Filter(
                 return false
         }
         amountSuperior?.let {
-            if (amountSuperior <= transaction.amount_transaction) {
+            if (amountSuperior >= transaction.amount_transaction) {
                 return false
             }
         }
@@ -31,7 +31,7 @@ data class Filter(
             }
         }
         amountInferior?.let {
-            if (amountInferior >= transaction.amount_transaction) {
+            if (amountInferior <= transaction.amount_transaction) {
                 return false
             }
         }

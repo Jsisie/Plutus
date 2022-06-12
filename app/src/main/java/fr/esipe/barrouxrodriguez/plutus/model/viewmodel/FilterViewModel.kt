@@ -5,8 +5,9 @@ import androidx.lifecycle.*
 import fr.esipe.barrouxrodriguez.plutus.model.NoteBookDatabase
 import fr.esipe.barrouxrodriguez.plutus.model.dao.FilterDao
 import fr.esipe.barrouxrodriguez.plutus.model.dao.NameTagDao
-import fr.esipe.barrouxrodriguez.plutus.model.dao.TransactionDao
-import fr.esipe.barrouxrodriguez.plutus.model.entity.*
+import fr.esipe.barrouxrodriguez.plutus.model.entity.Filter
+import fr.esipe.barrouxrodriguez.plutus.model.entity.FilterWithNameTags
+import fr.esipe.barrouxrodriguez.plutus.model.entity.NameTag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.streams.toList
@@ -34,8 +35,9 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
     fun insertWithStrings(filter: Filter, nameTagsList: List<String>) {
         viewModelScope.launch(Dispatchers.IO) {
             val id = filterDao.insert(filter)
-            val arrayNT = nameTagsList.stream().map { tag -> NameTag(tag, idFilter = id.toInt()) }.toList()
-                .toTypedArray()
+            val arrayNT =
+                nameTagsList.stream().map { tag -> NameTag(tag, idFilter = id.toInt()) }.toList()
+                    .toTypedArray()
 
             nameTagDao.insertAll(*arrayNT)
         }
@@ -44,7 +46,10 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
     fun insertWithNameTags(filter: Filter, nameTagsList: List<NameTag>) {
         viewModelScope.launch(Dispatchers.IO) {
             val id = filterDao.insert(filter)
-            nameTagDao.insertAll(*nameTagsList.toTypedArray())
+            val nameTagsArray = nameTagsList.stream()
+                .map { tag -> NameTag(tag.titleNameTag, idFilter = id.toInt()) }.toList()
+                .toTypedArray()
+            nameTagDao.insertAll(*nameTagsArray)
         }
     }
 

@@ -18,8 +18,11 @@ data class FilterWithNameTags(
     }
 
     override fun toString(): String {
-        val sb = StringBuilder("and contains these nametags: ")
-        nameTags.forEach { tag -> sb.append(tag) }
+        val sb = StringBuilder("")
+        if (nameTags.isNotEmpty()) {
+            sb.append(" contains the following tags: \n")
+            nameTags.forEach { tag -> sb.append(tag.titleNameTag).append("\n") }
+        }
         return filter.toString() + sb.toString()
     }
 }

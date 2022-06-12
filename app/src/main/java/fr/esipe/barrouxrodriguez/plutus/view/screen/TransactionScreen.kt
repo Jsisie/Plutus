@@ -66,7 +66,7 @@ class TransactionScreen {
         val isAmountError: MutableState<Boolean> = remember { mutableStateOf(false) }
 
         val actualTagMap: MutableMap<NameTag, NameTag> = remember {
-            mutableStateMapOf<NameTag, NameTag>()
+            mutableStateMapOf()
         }
 
         val openNameTagDialog: MutableState<Boolean> = remember {
