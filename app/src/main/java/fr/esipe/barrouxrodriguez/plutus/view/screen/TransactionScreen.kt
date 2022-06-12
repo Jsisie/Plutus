@@ -95,7 +95,8 @@ class TransactionScreen {
                     "yyyy-MM-dd"
                 )
             )
-        }           // Declaring DatePickerDialog and setting
+        }
+        // Declaring DatePickerDialog and setting
         // initial values as current values (present year, month and day)
         val mDatePickerDialog = DatePickerDialog(
             LocalContext.current,
@@ -331,7 +332,7 @@ class TransactionScreen {
         descriptionTransaction: MutableState<TextFieldValue>,
         isAmountError: MutableState<Boolean>,
         mDatePickerDialog: DatePickerDialog,
-        date: MutableState<String>
+        date: MutableState<String>,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             // TODO - change it in strings.xml

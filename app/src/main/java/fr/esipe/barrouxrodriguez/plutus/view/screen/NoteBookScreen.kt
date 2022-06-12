@@ -39,22 +39,23 @@ import kotlin.streams.toList
 
 class NoteBookScreen {
     private val notebookVM = notebookViewModel
-    @OptIn(ExperimentalMaterialApi::class)
+
     @SuppressLint("NotConstructor")
     @Composable
     fun NoteBookScreen(navController: NavController, idNoteBook: Int?, idFilter: Int?) {
-        val openAddDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
+        remember { mutableStateOf(false) }
         val filter: MutableState<(TransactionWithNameTags) -> Boolean> = remember {
-            mutableStateOf({ _ -> true })
+            mutableStateOf({ true })
         }
 
-        var actualFilter = idFilter?.let { filterViewModel.findFilterById(it).observeAsState().value }
+        var actualFilter =
+            idFilter?.let { filterViewModel.findFilterById(it).observeAsState().value }
 
         filter.value = idFilter?.let {
             actualFilter?.let {
                 { transaction -> it.test(transaction) }
-            } ?: { _ -> true }
-        } ?: { _ -> true }
+            } ?: { true }
+        } ?: { true }
 
         val noteBookWithLists: NoteBookWithTransactionsAndBudget = idNoteBook?.let {
             notebookVM.findNoteBookById(it).observeAsState().value
@@ -104,7 +105,7 @@ class NoteBookScreen {
 
                     Spacer(Modifier.weight(1f / 3f))
                     Button(onClick = {
-                        filter.value = {_ -> true}
+                        filter.value = { _ -> true }
                         actualFilter = null
                     }) {
                         Icon(
@@ -183,10 +184,11 @@ class NoteBookScreen {
                 )
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    // TODO - change it in strings.xml
-                    text = String.format("%.2f €", noteBookWithLists.listTransaction.stream().filter { transaction -> filter.value.invoke(transaction) }
-                        .mapToDouble { transaction -> transaction.transaction.amount_transaction.toDouble() }
-                        ?.sum()?.toFloat()),
+                    text = String.format("%.2f €",
+                        noteBookWithLists.listTransaction.stream()
+                            .filter { transaction -> filter.value.invoke(transaction) }
+                            .mapToDouble { transaction -> transaction.transaction.amount_transaction.toDouble() }
+                            ?.sum()?.toFloat()),
                     fontSize = 50.sp,
                     textAlign = TextAlign.Center
                 )
@@ -197,7 +199,7 @@ class NoteBookScreen {
                     fontSize = 30.sp,
                     textAlign = TextAlign.Center
                 )
-                if(actualFilter != null) {
+                if (actualFilter != null) {
                     Text(
                         "Actual filter: $actualFilter",
                         modifier = Modifier.fillMaxWidth(),
@@ -211,13 +213,12 @@ class NoteBookScreen {
                         .padding(16.dp)
                         .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                )
-                {
+                ) {
                     LazyColumn {
                         items(
                             noteBookWithLists.listTransaction.stream()
                                 .filter { transaction -> filter.value.invoke(transaction) }.toList()
-                        ){ transaction ->
+                        ) { transaction ->
                             Card(
                                 modifier = Modifier
                                     .padding(5.dp)
@@ -259,7 +260,7 @@ class NoteBookScreen {
                                             tagWidth = 120.dp,
                                             tagHeight = 15.dp,
                                             onTap = {},
-                                            color = { _ -> Color.Black },
+                                            color = { Color.Black },
                                             backgroundColor = { tag ->
                                                 when (tag.titleNameTag[0]) {
                                                     '-' -> Color(239, 83, 80, 255)
