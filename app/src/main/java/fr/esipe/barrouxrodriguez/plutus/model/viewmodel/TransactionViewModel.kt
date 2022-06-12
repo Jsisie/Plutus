@@ -44,7 +44,7 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
 
     fun insertWithNameTags(transaction: Transaction, nameTagsList: List<NameTag>) {
         viewModelScope.launch(Dispatchers.IO) {
-            val id = transactionDao.insertAll(transaction)[0]
+            transactionDao.insertAll(transaction)[0]
             nameTagDao.insertAll(*nameTagsList.toTypedArray())
         }
     }

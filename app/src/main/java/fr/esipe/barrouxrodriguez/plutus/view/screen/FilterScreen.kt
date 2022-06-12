@@ -60,7 +60,7 @@ class FilterScreen {
         }
 
         val actualTagMap: MutableMap<NameTag, NameTag> = remember {
-            mutableStateMapOf<NameTag, NameTag>()
+            mutableStateMapOf()
         }
 
         val titreContient: MutableState<TextFieldValue> = remember {
@@ -86,7 +86,7 @@ class FilterScreen {
                 mutableStateOf(
                     FilterWithNameTags(
                         Filter("", null, null, null, null, null, null),
-                        emptyList<NameTag>()
+                        emptyList()
                     )
                 )
             }
@@ -348,7 +348,9 @@ class FilterScreen {
                 }
             }
         ) { innerPadding ->
-            LazyColumn(Modifier.padding(innerPadding).padding(6.dp)) {
+            LazyColumn(Modifier
+                .padding(innerPadding)
+                .padding(6.dp)) {
                 items(filterList.reversed()) { filter ->
                     Card(
                         onClick = {

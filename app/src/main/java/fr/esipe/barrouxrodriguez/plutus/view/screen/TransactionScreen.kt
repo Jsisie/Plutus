@@ -3,7 +3,6 @@ package fr.esipe.barrouxrodriguez.plutus.view.screen
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.widget.DatePicker
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
@@ -196,7 +195,6 @@ class TransactionScreen {
                         titleTransaction,
                         isTitleError,
                         amountTransaction,
-                        descriptionTransaction,
                         isAmountError,
                         mDatePickerDialog,
                         date
@@ -329,7 +327,6 @@ class TransactionScreen {
         titleTransaction: MutableState<TextFieldValue>,
         isTitleError: MutableState<Boolean>,
         amountTransaction: MutableState<TextFieldValue>,
-        descriptionTransaction: MutableState<TextFieldValue>,
         isAmountError: MutableState<Boolean>,
         mDatePickerDialog: DatePickerDialog,
         date: MutableState<String>,
@@ -411,7 +408,7 @@ class TransactionScreen {
     }
 
 
-    @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterialApi::class)
     @SuppressLint("NotConstructor")
     @Composable
     fun TransactionScreen(navController: NavController, idTransaction: Int?) {
@@ -514,16 +511,14 @@ class TransactionScreen {
                             Button(modifier = Modifier.padding(10.dp), onClick = {
                                 calendar.set(year, month, day)
 
-                                val updateTransaction = idNoteBook.let {
-                                    Transaction(
-                                        title_transaction = titleTransaction.value.text,
-                                        amount_transaction = amountTransaction.value.text.toFloat(),
-                                        date_transaction = calendar.time,
-                                        description_transaction = descriptionTransaction.value.text,
-                                        idNotebook = it,
-                                        idTransaction = transaction.idTransaction
-                                    )
-                                }
+                                val updateTransaction = Transaction(
+                                    title_transaction = titleTransaction.value.text,
+                                    amount_transaction = amountTransaction.value.text.toFloat(),
+                                    date_transaction = calendar.time,
+                                    description_transaction = descriptionTransaction.value.text,
+                                    idNotebook = idNoteBook,
+                                    idTransaction = transaction.idTransaction
+                                )
 
                                 nameTagViewModel.deleteByTransaction(transaction.idTransaction)
 
@@ -575,7 +570,6 @@ class TransactionScreen {
                         titleTransaction,
                         isTitleError,
                         amountTransaction,
-                        descriptionTransaction,
                         isAmountError,
                         mDatePickerDialog,
                         date
